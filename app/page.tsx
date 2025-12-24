@@ -1,5 +1,6 @@
 "use client";
 import Image from "next/image";
+import { SpeedInsights } from "@vercel/speed-insights/next"
 
   import { useEffect, useState } from "react";
   import { motion, AnimatePresence } from "framer-motion";
