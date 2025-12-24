@@ -1,85 +1,24 @@
 "use client";
-
-import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { Code2, Zap, Database, Wrench, Cloud, Package, Globe, Shield } from "lucide-react";
+import { Smartphone, Globe, Zap, Code2, Database, Wrench, Shield, Package } from "lucide-react";
+import React from "react";
 
+// You should receive `skills` as a prop or fetch it here.
+// For demo, let's assume it's passed as a prop:
 interface Skill {
-  _id: string;
+  _id?: string;
   name: string;
-  type: "Technical Skills" | "Languages Spoken";
+  type: string;
   subtype?: string;
-  level?: string;
   language?: string;
   languageProficiency?: string;
-  createdAt?: string;
-  updatedAt?: string;
 }
 
-// Map subtypes → icon + color theme
-const categoryMeta: Record<string, { icon: React.ReactNode; classes: { border: string; chip: string; iconBg: string } }> = {
-  "Mobile Development": {
-    icon: <Code2 className="w-6 h-6" />,
-    classes: { border: "border-indigo-500/30", chip: "bg-indigo-500/10 text-indigo-200 border-indigo-500/20", iconBg: "bg-indigo-500/15 text-indigo-300" },
-  },
-  "Web Development": {
-    icon: <Globe className="w-6 h-6" />,
-    classes: { border: "border-fuchsia-500/30", chip: "bg-fuchsia-500/10 text-fuchsia-200 border-fuchsia-500/20", iconBg: "bg-fuchsia-500/15 text-fuchsia-300" },
-  },
-  "Frameworks": {
-    icon: <Zap className="w-6 h-6" />,
-    classes: { border: "border-violet-500/30", chip: "bg-violet-500/10 text-violet-200 border-violet-500/20", iconBg: "bg-violet-500/15 text-violet-300" },
-  },
-  "Programming Languages": {
-    icon: <Code2 className="w-6 h-6" />,
-    classes: { border: "border-blue-500/30", chip: "bg-blue-500/10 text-blue-200 border-blue-500/20", iconBg: "bg-blue-500/15 text-blue-300" },
-  },
-  "Databases": {
-    icon: <Database className="w-6 h-6" />,
-    classes: { border: "border-cyan-500/30", chip: "bg-cyan-500/10 text-cyan-200 border-cyan-500/20", iconBg: "bg-cyan-500/15 text-cyan-300" },
-  },
-  "Tools & Platforms": {
-    icon: <Wrench className="w-6 h-6" />,
-    classes: { border: "border-emerald-500/30", chip: "bg-emerald-500/10 text-emerald-200 border-emerald-500/20", iconBg: "bg-emerald-500/15 text-emerald-300" },
-  },
-  "Cybersecurity": {
-    icon: <Shield className="w-6 h-6" />,
-    classes: { border: "border-orange-500/30", chip: "bg-orange-500/10 text-orange-200 border-orange-500/20", iconBg: "bg-orange-500/15 text-orange-300" },
-  },
-  Other: {
-    icon: <Package className="w-6 h-6" />,
-    classes: { border: "border-slate-500/30", chip: "bg-slate-500/10 text-slate-200 border-slate-500/20", iconBg: "bg-slate-500/15 text-slate-300" },
-  },
-};
+interface SkillsSectionProps {
+  skills: Skill[];
+}
 
-const levelColors: Record<string, string> = {
-  Beginner: "bg-blue-100 text-blue-800",
-  Intermediate: "bg-amber-100 text-amber-800",
-  Advanced: "bg-green-100 text-green-800",
-  Expert: "bg-purple-100 text-purple-800",
-};
-
-export default function SkillsPage() {
-  const [skills, setSkills] = useState<Skill[]>([]);
-  const [loading, setLoading] = useState(true);
-  // No filter UI in the target design; always show grouped categories
-
-  useEffect(() => {
-    loadSkills();
-  }, []);
-
-  const loadSkills = async () => {
-    try {
-      const res = await fetch("/api/skills");
-      const data = await res.json();
-      setSkills(data);
-    } catch (error) {
-      console.error("Failed to load skills:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
+const SkillsSection: React.FC<SkillsSectionProps> = ({ skills }) => {
   // Group Technical Skills by subtype
   const technicalSkills = skills.filter((skill) => skill.type === "Technical Skills");
   const groupedTechnicalSkills = technicalSkills.reduce(
@@ -95,132 +34,297 @@ export default function SkillsPage() {
   // Get Languages Spoken
   const languagesSpoken = skills.filter((skill) => skill.type === "Languages Spoken");
 
+  const categoryMeta: Record<string, { icon: React.ReactNode; classes: { border: string; chip: string; iconBg: string; gradient: string } }> = {
+    "Mobile Development": {
+      icon: <Smartphone className="w-6 h-6" />,
+      classes: { 
+        border: "border-gray-700/50", 
+        chip: "bg-gray-800/50 text-blue-500 border-gray-700/30", 
+        iconBg: "bg-gradient-to-br from-gray-800/30 to-gray-900/30 text-gray-300",
+        gradient: "from-gray-800/10 via-black-800/20 to-transparent"
+      },
+    },
+    "Web Development": {
+      icon: <Globe className="w-6 h-6" />,
+      classes: { 
+        border: "border-gray-700/50", 
+        chip: "bg-gray-800/50 text-blue-500 border-gray-700/30", 
+        iconBg: "bg-gradient-to-br from-gray-800/30 to-gray-900/30 text-gray-300",
+        gradient: "from-gray-800/10 via-black-800/20 to-transparent"
+      },
+    },
+    "Frameworks": {
+      icon: <Zap className="w-6 h-6" />,
+      classes: { 
+        border: "border-gray-700/50", 
+        chip: "bg-gray-800/50 text-blue-500 border-gray-700/30", 
+        iconBg: "bg-gradient-to-br from-gray-800/30 to-gray-900/30 text-gray-300",
+        gradient: "from-gray-800/10 via-black-800/20 to-transparent"
+      },
+    },
+    "Programming Languages": {
+      icon: <Code2 className="w-6 h-6" />,
+      classes: { 
+        border: "border-gray-700/50", 
+        chip: "bg-gray-800/50 text-blue-500 border-gray-700/30", 
+        iconBg: "bg-gradient-to-br from-gray-800/30 to-gray-900/30 text-gray-300",
+        gradient: "from-gray-800/10 via-black-800/20 to-transparent"
+      },
+    },
+    "Databases": {
+      icon: <Database className="w-6 h-6" />,
+      classes: { 
+        border: "border-gray-700/50", 
+        chip: "bg-gray-800/50 text-blue-500 border-gray-700/30", 
+        iconBg: "bg-gradient-to-br from-gray-800/30 to-gray-900/30 text-gray-300",
+        gradient: "from-gray-800/10 via-black-800/20 to-transparent"
+      },
+    },
+    "Tools & Platforms": {
+      icon: <Wrench className="w-6 h-6" />,
+      classes: { 
+        border: "border-gray-700/50", 
+        chip: "bg-gray-800/50 text-blue-500 border-gray-700/30", 
+        iconBg: "bg-gradient-to-br from-gray-800/30 to-gray-900/30 text-gray-300",
+        gradient: "from-gray-800/10 via-black-800/20 to-transparent"
+      },
+    },
+    "Cybersecurity": {
+      icon: <Shield className="w-6 h-6" />,
+      classes: { 
+        border: "border-gray-700/50", 
+        chip: "bg-gray-800/50 text-blue-500 border-gray-700/30", 
+        iconBg: "bg-gradient-to-br from-gray-800/30 to-gray-900/30 text-gray-300",
+        gradient: "from-gray-800/10 via-black-800/20 to-transparent"
+      },
+    },
+    Other: {
+      icon: <Package className="w-6 h-6" />,
+      classes: { 
+        border: "border-slate-500/30", 
+        chip: "bg-slate-500/10 text-slate-200 border-slate-500/20", 
+        iconBg: "bg-gradient-to-br from-slate-500/20 to-slate-600/20 text-slate-300",
+        gradient: "from-slate-500/5 via-black-500/10 to-transparent"
+      },
+    },
+  };
+
   return (
-    <div id="top" className="space-y-6 max-w-6xl mx-auto px-6 py-16">
-      <section id="skills" className="py-6 relative">
-        <div className="absolute inset-0 -z-10">
-          <div className="absolute top-1/4 right-1/4 w-80 h-80 bg-primary/5 rounded-full blur-3xl" />
-          <div className="absolute bottom-1/4 left-1/4 w-80 h-80 bg-secondary/5 rounded-full blur-3xl" />
+    <motion.section 
+      id="skills"
+      initial={{ opacity: 0 }}
+      whileInView={{ opacity: 1 }}
+      viewport={{ once: true }}
+      className="scroll-mt-20"
+    >
+      {skills.length === 0 ? (
+        <div className="grid gap-1 md:grid-cols-2 lg:grid-cols-3">
+          {[1,2,3,4,5,6].map((i) => (
+            <div key={i} className="h-40 rounded-2xl bg-gradient-to-br from-white/5 to-transparent border border-white/10 animate-pulse" />
+          ))}
         </div>
-
-        <div className="container max-w-6xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 12 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5 }}
-            className="text-center mb-14"
-          >
-            <div className="font-mono text-sm text-blue-400/80">function getSkills() {'{'} </div>
-            <h2 className="text-4xl md:text-5xl font-extrabold bg-gradient-to-r from-indigo-400 via-blue-400 to-purple-400 bg-clip-text text-transparent tracking-tight">
-              Technical Skills
-            </h2>
-            <div className="font-mono text-sm text-blue-400/80"> {'}'} </div>
-          </motion.div>
-
-          {/* Technical Skills Grid as category cards with chips */}
-          {loading ? (
-            <div className="text-center py-12">
-              <p className="text-muted-foreground">Loading skills...</p>
-            </div>
-          ) : Object.keys(groupedTechnicalSkills).length === 0 && languagesSpoken.length === 0 ? (
-            <div className="text-center py-12">
-              <p className="text-muted-foreground">No skills available yet.</p>
-            </div>
-          ) : (
-            <>
-              <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-                {Object.entries(groupedTechnicalSkills).map(([subtype, subtypeSkills], idx) => (
-                  <motion.div
-                    key={subtype}
-                    initial={{ opacity: 0, y: 16 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.45, delay: idx * 0.05 }}
-                    className={`rounded-2xl p-6 border backdrop-blur-md bg-gradient-to-br from-white/5 to-transparent ${
-                      (categoryMeta[subtype]?.classes.border) || "border-white/10"
-                    }`}
-                  >
-                    <div className="flex items-center gap-3 mb-5">
-                      <div className={`w-10 h-10 rounded-xl inline-flex items-center justify-center ${(categoryMeta[subtype]?.classes.iconBg) || "bg-white/10 text-white/70"}`}>
-                        {categoryMeta[subtype]?.icon || <Package className="w-6 h-6" />}
-                      </div>
-                      <h3 className="text-lg md:text-xl font-semibold">{subtype}</h3>
-                    </div>
-
-                    <div className="flex flex-wrap gap-2">
-                      {subtypeSkills.map((skill) => (
-                        <span
-                          key={skill._id}
-                          className={`px-3 py-1 rounded-full text-sm border ${
-                            (categoryMeta[subtype]?.classes.chip) || "bg-white/10 text-white/80 border-white/20"
-                          }`}
-                        >
-                          {skill.name}
-                        </span>
-                      ))}
-                    </div>
-                  </motion.div>
-                ))}
-              </div>
-            </>
-          )}
-
-          {/* Languages Section */}
+      ) : (
+        <div className="space-y-20">
+          {/* Languages Spoken Section */}
           {languagesSpoken.length > 0 && (
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: 0.2 }}
-              className="mt-20 pt-12 border-t border-white/10"
+              transition={{ duration: 0.6 }}
+              className="relative"
             >
-              <div className="text-center mb-12">
-                <div className="font-mono text-sm text-emerald-400/80">{/* Languages Spoken */}</div>
-                <h2 className="text-3xl md:text-4xl font-extrabold bg-gradient-to-r from-emerald-400 to-teal-400 bg-clip-text text-transparent tracking-tight mt-2">
-                  Languages
-                </h2>
-              </div>
-
-              <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-4">
-                {languagesSpoken.map((lang, idx) => {
-                  // Extract proficiency level abbreviation
-                  const proficiency = lang.languageProficiency || "Not specified";
-                  const shortProficiency = proficiency
-                    .replace("Elementary proficiency", "Elementary")
-                    .replace("Limited working proficiency", "Limited")
-                    .replace("Professional working proficiency", "Professional")
-                    .replace("Full professional proficiency", "Fluent")
-                    .replace("Native or bilingual proficiency", "Native");
-                  
-                  return (
+              <div className="relative">
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  className="text-center mb-12"
+                >
+                  <div className="inline-flex items-center gap-3 px-6 py-3 rounded-full bg-gradient-to-r from-blue-500/10 to-cyan-500/10 border border-blue-500/20 backdrop-blur-sm mb-4">
+                    <Globe className="w-5 h-5 text-blue-400" />
+                    <span className="font-mono text-sm text-blue-400/90">languages.spoken</span>
+                  </div>
+                  <h3 className="text-4xl md:text-5xl font-extrabold text-white tracking-tight">
+                    Languages I Speak
+                  </h3>
+                  <p className="text-gray-400 text-lg mt-3 max-w-xl mx-auto">
+                    Communication across cultures and communities
+                  </p>
+                </motion.div>
+                <div className="flex gap-6 overflow-x-auto pb-2 md:grid md:grid-cols-2 lg:grid-cols-4 md:overflow-visible md:pb-0">
+                  {languagesSpoken.map((lang, idx) => (
                     <motion.div
-                      key={lang._id}
-                      initial={{ opacity: 0, scale: 0.95 }}
-                      whileInView={{ opacity: 1, scale: 1 }}
+                      key={lang._id || idx}
+                      initial={{ opacity: 0, scale: 0.9, y: 20 }}
+                      whileInView={{ opacity: 1, scale: 1, y: 0 }}
                       viewport={{ once: true }}
-                      transition={{ duration: 0.4, delay: idx * 0.08 }}
-                      className="rounded-xl p-5 border border-emerald-500/30 bg-gradient-to-br from-emerald-500/10 to-transparent backdrop-blur-md hover:border-emerald-500/50 transition-colors"
+                      transition={{
+                        duration: 0.5,
+                        delay: idx * 0.1,
+                        type: "spring",
+                        stiffness: 100,
+                      }}
+                      whileHover={{
+                        y: -8,
+                        scale: 1.03,
+                        transition: { duration: 0.2 },
+                      }}
+                      className="group relative rounded-2xl p-6 min-w-[260px] border border-gray-800/60 bg-black/70 backdrop-blur-lg transition-all hover:-translate-y-1.5 hover:shadow-[0_20px_60px_rgba(59,130,246,0.3)] hover:border-blue-400"
                     >
-                      <div className="flex items-center gap-3 mb-3">
-                        <div className="w-9 h-9 rounded-lg inline-flex items-center justify-center bg-emerald-500/20 text-emerald-300">
-                          <Globe className="w-5 h-5" />
+                      <motion.div
+                        className="absolute inset-0 bg-gradient-to-br from-blue-500/10 via-black/30 to-blue-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+                        animate={{ scale: [1, 1.05, 1] }}
+                        transition={{ duration: 3, repeat: Number.POSITIVE_INFINITY, ease: "easeInOut" }}
+                      />
+                      <div className="relative">
+                        <div className="flex items-center gap-4 mb-4">
+                          <motion.div
+                            className="w-14 h-14 rounded-xl inline-flex items-center justify-center bg-gradient-to-br from-blue-500/20 to-white/10 shadow-lg group-hover:shadow-blue-400/30 transition-shadow"
+                            whileHover={{ rotate: [0, -10, 10, -10, 0] }}
+                            transition={{ duration: 0.5 }}
+                          >
+                            <Globe className="w-7 h-7 text-blue-400" />
+                          </motion.div>
+                          <div className="flex-1">
+                            <h4 className="font-bold text-white text-xl group-hover:text-blue-400 transition-colors">
+                              {lang.language}
+                            </h4>
+                          </div>
                         </div>
-                        <h4 className="font-semibold text-white text-lg">
-                          {lang.language}
-                        </h4>
+                        <div className="flex items-center gap-2">
+                          <div className="flex-1 h-2 bg-gray-800 rounded-full overflow-hidden">
+                            <motion.div
+                              initial={{ width: "0%" }}
+                              whileInView={{
+                                width:
+                                  lang.languageProficiency === "Native or bilingual proficiency"
+                                    ? "100%"
+                                    : lang.languageProficiency === "Full professional proficiency"
+                                    ? "90%"
+                                    : lang.languageProficiency === "Professional working proficiency"
+                                    ? "75%"
+                                    : lang.languageProficiency === "Limited working proficiency"
+                                    ? "55%"
+                                    : lang.languageProficiency === "Elementary proficiency"
+                                    ? "35%"
+                                    : "45%",
+                              }}
+                              viewport={{ once: true }}
+                              transition={{ duration: 1, delay: idx * 0.1 }}
+                              className="h-full bg-gradient-to-r from-blue-400 to-blue-600 rounded-full"
+                            />
+                          </div>
+                          <span className="text-xs text-gray-400 font-mono">
+                            {lang.languageProficiency || "Not specified"}
+                          </span>
+                        </div>
                       </div>
-                      <p className="text-sm text-emerald-200/80 font-medium">
-                        ({shortProficiency})
-                      </p>
+                      <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-blue-500/10 to-transparent rounded-bl-3xl" />
                     </motion.div>
-                  );
-                })}
+                  ))}
+                </div>
               </div>
             </motion.div>
           )}
+
+          {/* Technical Skills Section */}
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+          >
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="text-center mb-12"
+            >
+              <div className="inline-flex items-center gap-3 px-6 py-3 rounded-full bg-gradient-to-r from-blue-500/10 to-cyan-500/10 border border-blue-500/20 backdrop-blur-sm mb-4">
+                <Code2 className="w-5 h-5 text-blue-400" />
+                <span className="font-mono text-sm text-blue-400/90">skills.technical</span>
+              </div>
+              <h3 className="text-4xl md:text-5xl font-extrabold bg-white bg-clip-text text-transparent tracking-tight">
+                Technical Arsenal
+              </h3>
+              <p className="text-gray-400 text-lg mt-3 max-w-xl mx-auto">
+                Technologies and tools I work with to build amazing solutions
+              </p>
+            </motion.div>
+            <div className="flex gap-6 overflow-x-auto pb-2 md:grid md:grid-cols-2 lg:grid-cols-3 md:overflow-visible md:pb-0">
+              {Object.entries(groupedTechnicalSkills).map(([subtype, subtypeSkills], idx) => {
+                const meta = categoryMeta[subtype] || categoryMeta.Other;
+                return (
+                  <motion.div
+                    key={subtype}
+                    initial={{ opacity: 0, y: 20, scale: 0.95 }}
+                    whileInView={{ opacity: 1, y: 0, scale: 1 }}
+                    viewport={{ once: true }}
+                    transition={{ 
+                      duration: 0.5, 
+                      delay: idx * 0.08,
+                      type: "spring",
+                      stiffness: 100
+                    }}
+                    whileHover={{ 
+                      y: -8,
+                      scale: 1.02,
+                      transition: { duration: 0.2 }
+                    }}
+                    className={`group relative rounded-2xl p-6 min-w-[260px] border ${meta.classes.border} bg-gradient-to-br ${meta.classes.gradient} to-transparent backdrop-blur-xl hover:border-blue-500 hover:shadow-[0_20px_60px_rgba(59,130,246,0.3)] transition-all overflow-hidden`}
+                  >
+                    <motion.div 
+                      className="absolute inset-0 bg-gradient-to-br from-blue-500/10 via-black/30 to-blue-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+                      animate={{
+                        scale: [1, 1.02, 1],
+                      }}
+                      transition={{
+                        duration: 3,
+                        repeat: Number.POSITIVE_INFINITY,
+                        ease: "easeInOut"
+                      }}
+                    />
+                    <div className="relative">
+                      <div className="flex items-center gap-3 mb-6">
+                        <motion.div 
+                          className={`w-12 h-12 rounded-xl inline-flex items-center justify-center ${meta.classes.iconBg} shadow-lg`}
+                          whileHover={{ rotate: [0, -5, 5, -5, 0], scale: 1.1 }}
+                          transition={{ duration: 0.5 }}
+                        >
+                          {meta.icon}
+                        </motion.div>
+                        <h3 className="text-lg md:text-xl font-bold text-white group-hover:scale-105 transition-transform">
+                          {subtype}
+                        </h3>
+                      </div>
+                      <div className="flex flex-wrap gap-2">
+                        {subtypeSkills.map((skill, skillIdx) => (
+                          <motion.span
+                            key={skill._id}
+                            initial={{ opacity: 0, scale: 0.8 }}
+                            whileInView={{ opacity: 1, scale: 1 }}
+                            viewport={{ once: true }}
+                            transition={{ delay: idx * 0.1 + skillIdx * 0.05 }}
+                            whileHover={{ scale: 1.05, y: -2 }}
+                            className={`px-3 py-1.5 rounded-lg text-sm font-medium border ${meta.classes.chip} hover:bg-opacity-20 transition-all cursor-default`}
+                          >
+                            {skill.name}
+                          </motion.span>
+                        ))}
+                      </div>                              
+                    </div>
+                    <div className="absolute bottom-0 right-0 w-24 h-24 bg-gradient-to-tl from-white/5 to-transparent rounded-tl-3xl" />
+                    <div className="absolute top-0 left-0 w-16 h-16 bg-gradient-to-br from-white/5 to-transparent rounded-br-3xl" />
+                  </motion.div>
+                );
+              })}
+            </div>
+          </motion.div>
         </div>
-      </section>
-    </div>
+      )}
+    </motion.section>
   );
-}
+};
+
+export default SkillsSection;

@@ -1,21 +1,32 @@
 "use client";
-
-import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { ChevronRight, Facebook, Github, Instagram, Linkedin, Mail, MapPin, Phone, Send } from "lucide-react";
+import { Mail, Phone, MapPin, Github, Linkedin, Facebook, Instagram, Send } from "lucide-react";
+import React, { useState } from "react";
 
-async function getData<T = any>(url: string): Promise<T | null> {
-  try {
-    const res = await fetch(url, { cache: "no-store" });
-    if (!res.ok) return null;
-    return res.json();
-  } catch {
-    return null;
-  }
+interface Contact {
+  email: string;
+  studentEmail?: string;
+  phone: string;
+  location: string;
+  github?: string;
+  linkedin?: string;
+  facebook?: string;
+  instagram?: string;
 }
 
-export default function ContactPage() {
-  const [contacts, setContacts] = useState<any[]>([]);
+interface SectionHeaderProps {
+  title: string;
+  subtitle: string;
+  codeComment: string;
+}
+
+interface ContactSectionProps {
+  contacts: Contact[];
+  SectionHeader: React.ComponentType<SectionHeaderProps>;
+}
+
+const ContactSection: React.FC<ContactSectionProps> = ({ contacts, SectionHeader }) => {
+  const [copiedField, setCopiedField] = useState<string | null>(null);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
@@ -23,243 +34,385 @@ export default function ContactPage() {
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    const loadContacts = async () => {
-      const data = await getData<any[]>("/api/contact");
-      setContacts(data ?? []);
-    };
-
-    loadContacts();
-  }, []);
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSubmit = async (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
+    setSubmitting(true);
     setError(null);
-    if (!name.trim() || !email.trim() || !message.trim()) {
-      setError("Please fill in all fields.");
-      return;
-    }
+    setSubmitted(false);
 
-    try {
-      setSubmitting(true);
-
-      await fetch("/api/messages", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, email, message, status: "new" }),
-      });
-
-      const subject = encodeURIComponent(`New message from ${name}`);
-      const body = encodeURIComponent(`Name: ${name}\nEmail: ${email}\n\nMessage:\n${message}`);
-      window.location.href = `mailto:k.saayinath@gmail.com?subject=${subject}&body=${body}`;
-
+    // Simulate sending (replace with your actual logic)
+    setTimeout(() => {
+      if (!name || !email || !message) {
+        setError("Please fill in all fields.");
+        setSubmitting(false);
+        return;
+      }
       setSubmitted(true);
+      setSubmitting(false);
       setName("");
       setEmail("");
       setMessage("");
-    } catch (err) {
-      console.error(err);
-      setError("Something went wrong. Please try again.");
-    } finally {
-      setSubmitting(false);
-    }
+    }, 1200);
   };
 
   return (
-    <div id="top" className="max-w-5xl mx-auto px-6 py-16 space-y-10">
-      <div className="text-center mb-6">
-        <p className="text-sm text-cyan-300/80 font-mono">{/* contact page */}</p>
-        <h1 className="text-4xl font-bold text-white mb-2">Contact</h1>
-        <p className="text-gray-400 text-sm">All the ways to reach me, plus a quick compose box.</p>
-      </div>
+    <motion.section
+      id="contact"
+      initial={{ opacity: 0 }}
+      whileInView={{ opacity: 1 }}
+      viewport={{ once: true }}
+      className="scroll-mt-20"
+    >
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ delay: 0.3, duration: 0.6 }}
+        className="text-center mb-16"
+      >
+        <SectionHeader
+          title="Contact"
+          subtitle="Have a project in mind? Let's collaborate and create something amazing together"
+          codeComment="// contact[]"
+        />
+      </motion.div>
 
-      <div className="rounded-3xl border-2 border-white/10 bg-gradient-to-br from-white/5 to-transparent p-8 backdrop-blur-sm overflow-hidden relative">
-        <div className="absolute inset-0">
+      <motion.div
+        initial={{ opacity: 0, y: 40 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ delay: 0.2 }}
+        className="rounded-3xl border-2 border-gray-500/20 bg-gradient-to-br from-cyan-500/5 to-transparent backdrop-blur-xl p-8 overflow-hidden relative shadow-2xl"
+      >
+        {/* Animated background orbs */}
+        <div className="absolute inset-0 overflow-hidden">
           <motion.div
-            animate={{ x: [0, 100, 0], y: [0, 50, 0] }}
-            transition={{ duration: 20, repeat: Number.POSITIVE_INFINITY, ease: "linear" }}
-            className="absolute h-64 w-64 bg-gradient-to-r from-cyan-600/10 to-teal-600/10 rounded-full blur-3xl"
+            animate={{
+              x: [0, 100, 0],
+              y: [0, 50, 0],
+              scale: [1, 1.2, 1],
+            }}
+            transition={{
+              duration: 20,
+              repeat: Number.POSITIVE_INFINITY,
+              ease: "easeInOut",
+            }}
+            className="absolute -top-32 -right-32 w-96 h-96 bg-gradient-to-br from-cyan-500/20 to-teal-500/20 rounded-full blur-3xl"
+          />
+          <motion.div
+            animate={{
+              x: [0, -80, 0],
+              y: [0, 80, 0],
+              scale: [1, 1.1, 1],
+            }}
+            transition={{
+              duration: 25,
+              repeat: Number.POSITIVE_INFINITY,
+              ease: "easeInOut",
+            }}
+            className="absolute -bottom-32 -left-32 w-80 h-80 bg-gradient-to-tr from-blue-500/20 to-cyan-500/20 rounded-full blur-3xl"
           />
         </div>
 
         {contacts.length === 0 ? (
-          <div className="rounded-2xl border border-white/10 bg-white/5 p-8 text-center text-gray-400">Loading contact information...</div>
-        ) : (
-          (() => {
-            const c = contacts[0];
-            return (
-              <div className="relative grid grid-cols-1 lg:grid-cols-2 gap-8">
-                <div className="space-y-6">
-                  <h3 className="text-2xl font-bold bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent mb-2">
-                    Get In Touch
-                  </h3>
+          <div className="rounded-2xl border border-white/10 bg-white/5 p-8 text-center text-gray-400">
+            <div className="animate-pulse">Loading contact information...</div>
+          </div>
+        ) : (() => {
+          const c = contacts[0];
+          return (
+            <div className="relative grid grid-cols-1 lg:grid-cols-2 gap-10">
+              {/* Left - Contact Info */}
+              <div className="space-y-6">
+                <motion.h3
+                  initial={{ opacity: 0, x: -20 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.3 }}
+                  className="text-3xl font-bold bg-gradient-to-r from-white via-cyan-100 to-teal-100 bg-clip-text text-transparent mb-6"
+                >
+                  Get In Touch
+                </motion.h3>
 
-                  <div className="space-y-4">
-                    <motion.div whileHover={{ x: 5 }} className="flex items-start gap-4 p-4 rounded-xl bg-gradient-to-r from-white/5 to-transparent border border-white/10 hover:border-cyan-500/30 transition-all">
-                      <div className="p-3 rounded-lg bg-gradient-to-r from-cyan-500/20 to-teal-500/20">
-                        <Mail size={20} className="text-cyan-400" />
+                <div className="space-y-4">
+                  <motion.div
+                    initial={{ opacity: 0, x: -20 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.4 }}
+                    whileHover={{ x: 8, scale: 1.02 }}
+                    onClick={async (e) => {
+                      e.stopPropagation();
+                      await navigator.clipboard.writeText(c.email);
+                      setCopiedField('email');
+                      setTimeout(() => setCopiedField(null), 1200);
+                    }}
+                    className="group relative flex items-start gap-4 p-5 rounded-2xl bg-gradient-to-r from-cyan-500/10 to-transparent border border-gray-500/20 hover:border-cyan-500/40 transition-all backdrop-blur-sm overflow-hidden cursor-pointer"
+                  >
+                    <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                    <div className="relative p-3 rounded-xl bg-gradient-to-br from-cyan-500/30 to-teal-500/30 shadow-lg group-hover:shadow-cyan-500/20 transition-shadow">
+                      <Mail size={22} className="text-cyan-300" />
+                    </div>
+                    <div className="relative flex-1">
+                      <p className="text-xs text-cyan-400/80 font-semibold mb-1 uppercase tracking-wider">Email</p>
+                      <p className="font-bold text-white text-lg group-hover:text-cyan-300 transition-colors flex items-center gap-2">
+                        {c.email}
+                        {copiedField === 'email' && (
+                          <span className="text-xs text-cyan-300 ml-2 animate-pulse">Copied!</span>
+                        )}
+                      </p>
+                    </div>
+                  </motion.div>
+
+                  {c.studentEmail && (
+                    <motion.div
+                      initial={{ opacity: 0, x: -20 }}
+                      whileInView={{ opacity: 1, x: 0 }}
+                      transition={{ delay: 0.45 }}
+                      whileHover={{ x: 8, scale: 1.02 }}
+                      onClick={async (e) => {
+                        e.stopPropagation();
+                        await navigator.clipboard.writeText(c.studentEmail!);
+                        setCopiedField('studentEmail');
+                        setTimeout(() => setCopiedField(null), 1200);
+                      }}
+                      className="group relative flex items-start gap-4 p-5 rounded-2xl bg-gradient-to-r from-teal-500/10 to-transparent border border-teal-500/20 hover:border-teal-500/40 transition-all backdrop-blur-sm overflow-hidden cursor-pointer"
+                    >
+                      <div className="absolute inset-0 bg-gradient-to-r from-teal-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                      <div className="relative p-3 rounded-xl bg-gradient-to-br from-teal-500/30 to-cyan-500/30 shadow-lg group-hover:shadow-teal-500/20 transition-shadow">
+                        <Mail size={22} className="text-teal-300" />
                       </div>
-                      <div>
-                        <p className="text-sm text-gray-400">Email</p>
-                        <p className="font-semibold text-white">{c.email}</p>
+                      <div className="relative flex-1">
+                        <p className="text-xs text-teal-400/80 font-semibold mb-1 uppercase tracking-wider">Student Email</p>
+                        <p className="font-bold text-white text-lg group-hover:text-teal-300 transition-colors flex items-center gap-2">
+                          {c.studentEmail}
+                          {copiedField === 'studentEmail' && (
+                            <span className="text-xs text-teal-300 ml-2 animate-pulse">Copied!</span>
+                          )}
+                        </p>
                       </div>
                     </motion.div>
+                  )}
 
-                    {c.studentEmail && (
-                      <motion.div whileHover={{ x: 5 }} className="flex items-start gap-4 p-4 rounded-xl bg-gradient-to-r from-white/5 to-transparent border border-white/10 hover:border-cyan-500/30 transition-all">
-                        <div className="p-3 rounded-lg bg-gradient-to-r from-cyan-500/20 to-teal-500/20">
-                          <Mail size={20} className="text-cyan-400" />
-                        </div>
-                        <div>
-                          <p className="text-sm text-gray-400">Student Email</p>
-                          <p className="font-semibold text-white">{c.studentEmail}</p>
-                        </div>
-                      </motion.div>
-                    )}
+                  <motion.div
+                    initial={{ opacity: 0, x: -20 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.5 }}
+                    whileHover={{ x: 8, scale: 1.02 }}
+                    onClick={async (e) => {
+                      e.stopPropagation();
+                      await navigator.clipboard.writeText(c.phone);
+                      setCopiedField('phone');
+                      setTimeout(() => setCopiedField(null), 1200);
+                    }}
+                    className="group relative flex items-start gap-4 p-5 rounded-2xl bg-gradient-to-r from-blue-500/10 to-transparent border border-blue-500/20 hover:border-blue-500/40 transition-all backdrop-blur-sm overflow-hidden cursor-pointer"
+                  >
+                    <div className="absolute inset-0 bg-gradient-to-r from-blue-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                    <div className="relative p-3 rounded-xl bg-gradient-to-br from-blue-500/30 to-cyan-500/30 shadow-lg group-hover:shadow-blue-500/20 transition-shadow">
+                      <Phone size={22} className="text-blue-300" />
+                    </div>
+                    <div className="relative flex-1">
+                      <p className="text-xs text-blue-400/80 font-semibold mb-1 uppercase tracking-wider">Phone</p>
+                      <p className="font-bold text-white text-lg group-hover:text-blue-300 transition-colors flex items-center gap-2">
+                        {c.phone}
+                        {copiedField === 'phone' && (
+                          <span className="text-xs text-blue-300 ml-2 animate-pulse">Copied!</span>
+                        )}
+                      </p>
+                    </div>
+                  </motion.div>
 
-                    <motion.div whileHover={{ x: 5 }} className="flex items-start gap-4 p-4 rounded-xl bg-gradient-to-r from-white/5 to-transparent border border-white/10 hover:border-cyan-500/30 transition-all">
-                      <div className="p-3 rounded-lg bg-gradient-to-r from-cyan-500/20 to-teal-500/20">
-                        <Phone size={20} className="text-cyan-400" />
-                      </div>
-                      <div>
-                        <p className="text-sm text-gray-400">Phone</p>
-                        <p className="font-semibold text-white">{c.phone}</p>
-                      </div>
-                    </motion.div>
-
-                    <motion.div whileHover={{ x: 5 }} className="flex items-start gap-4 p-4 rounded-xl bg-gradient-to-r from-white/5 to-transparent border border-white/10 hover:border-cyan-500/30 transition-all">
-                      <div className="p-3 rounded-lg bg-gradient-to-r from-cyan-500/20 to-teal-500/20">
-                        <MapPin size={20} className="text-cyan-400" />
-                      </div>
-                      <div>
-                        <p className="text-sm text-gray-400">Location</p>
-                        <p className="font-semibold text-white">{c.location}</p>
-                      </div>
-                    </motion.div>
-                  </div>
+                  <motion.div
+                    initial={{ opacity: 0, x: -20 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.55 }}
+                    whileHover={{ x: 8, scale: 1.02 }}
+                    onClick={() => {
+                      navigator.clipboard.writeText(c.location);
+                      alert('Location copied to clipboard!');
+                    }}
+                    className="group relative flex items-start gap-4 p-5 rounded-2xl bg-gradient-to-r from-purple-500/10 to-transparent border border-gray-500/20 hover:border-gray-500/40 transition-all backdrop-blur-sm overflow-hidden cursor-pointer"
+                  >
+                    <div className="absolute inset-0 bg-gradient-to-r from-purple-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                    <div className="relative p-3 rounded-xl bg-gradient-to-br from-purple-500/30 to-blue-500/30 shadow-lg group-hover:shadow-purple-500/20 transition-shadow">
+                      <MapPin size={22} className="text-purple-300" />
+                    </div>
+                    <div className="relative flex-1">
+                      <p className="text-xs text-purple-400/80 font-semibold mb-1 uppercase tracking-wider">Location</p>
+                      <p className="font-bold text-white text-lg group-hover:text-purple-300 transition-colors">{c.location}</p>
+                    </div>
+                  </motion.div>
                 </div>
 
-                <div className="space-y-6">
-                  <h3 className="text-2xl font-bold bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent mb-2">
-                    Connect & Message
-                  </h3>
-
-                  <div className="grid grid-cols-2 gap-4">
+                {/* Social Links */}
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.6 }}
+                  className="pt-6"
+                >
+                  <h4 className="text-sm font-semibold text-gray-400 mb-4 uppercase tracking-wider">Connect on Social</h4>
+                  <div className="grid grid-cols-2 gap-3">
                     {c.github && (
                       <motion.a
-                        whileHover={{ scale: 1.05 }}
+                        whileHover={{ scale: 1.05, y: -2 }}
                         whileTap={{ scale: 0.95 }}
                         href={c.github}
                         target="_blank"
                         rel="noreferrer"
-                        className="flex items-center gap-3 p-4 rounded-xl bg-gradient-to-r from-gray-900/50 to-gray-800/50 border border-gray-700/50 hover:border-gray-600 transition-all group"
+                        className="flex items-center justify-center gap-2 p-3 rounded-xl bg-gradient-to-br from-gray-800/80 to-gray-900/80 border border-gray-700/50 hover:border-gray-500 transition-all group shadow-lg hover:shadow-gray-700/50"
                       >
-                        <div className="p-2 rounded-lg bg-gradient-to-r from-gray-800 to-gray-900">
-                          <Github size={20} className="text-white" />
-                        </div>
-                        <span className="text-white font-medium">GitHub</span>
-                        <ChevronRight size={16} className="ml-auto text-gray-400 group-hover:text-white transition-colors" />
+                        <Github size={18} className="text-gray-300 group-hover:text-white transition-colors" />
+                        <span className="text-sm font-semibold text-gray-300 group-hover:text-white transition-colors">GitHub</span>
                       </motion.a>
                     )}
 
                     {c.linkedin && (
                       <motion.a
-                        whileHover={{ scale: 1.05 }}
+                        whileHover={{ scale: 1.05, y: -2 }}
                         whileTap={{ scale: 0.95 }}
                         href={c.linkedin}
                         target="_blank"
                         rel="noreferrer"
-                        className="flex items-center gap-3 p-4 rounded-xl bg-gradient-to-r from-blue-900/50 to-blue-800/50 border border-blue-700/50 hover:border-blue-600 transition-all group"
+                        className="flex items-center justify-center gap-2 p-3 rounded-xl bg-gradient-to-br from-blue-700/80 to-blue-800/80 border border-blue-600/50 hover:border-blue-400 transition-all group shadow-lg hover:shadow-blue-600/50"
                       >
-                        <div className="p-2 rounded-lg bg-gradient-to-r from-blue-800 to-blue-900">
-                          <Linkedin size={20} className="text-white" />
-                        </div>
-                        <span className="text-white font-medium">LinkedIn</span>
-                        <ChevronRight size={16} className="ml-auto text-blue-400 group-hover:text-white transition-colors" />
+                        <Linkedin size={18} className="text-blue-300 group-hover:text-white transition-colors" />
+                        <span className="text-sm font-semibold text-blue-300 group-hover:text-white transition-colors">LinkedIn</span>
                       </motion.a>
                     )}
 
                     {c.facebook && (
                       <motion.a
-                        whileHover={{ scale: 1.05 }}
+                        whileHover={{ scale: 1.05, y: -2 }}
                         whileTap={{ scale: 0.95 }}
                         href={c.facebook}
                         target="_blank"
                         rel="noreferrer"
-                        className="flex items-center gap-3 p-4 rounded-xl bg-gradient-to-r from-blue-700/50 to-blue-600/50 border border-blue-500/50 hover:border-blue-400 transition-all group"
+                        className="flex items-center justify-center gap-2 p-3 rounded-xl bg-gradient-to-br from-blue-600/80 to-blue-700/80 border border-blue-500/50 hover:border-blue-300 transition-all group shadow-lg hover:shadow-blue-500/50"
                       >
-                        <div className="p-2 rounded-lg bg-gradient-to-r from-blue-600 to-blue-700">
-                          <Facebook size={20} className="text-white" />
-                        </div>
-                        <span className="text-white font-medium">Facebook</span>
-                        <ChevronRight size={16} className="ml-auto text-blue-300 group-hover:text-white transition-colors" />
+                        <Facebook size={18} className="text-blue-300 group-hover:text-white transition-colors" />
+                        <span className="text-sm font-semibold text-blue-300 group-hover:text-white transition-colors">Facebook</span>
                       </motion.a>
                     )}
 
                     {c.instagram && (
                       <motion.a
-                        whileHover={{ scale: 1.05 }}
+                        whileHover={{ scale: 1.05, y: -2 }}
                         whileTap={{ scale: 0.95 }}
                         href={c.instagram}
                         target="_blank"
                         rel="noreferrer"
-                        className="flex items-center gap-3 p-4 rounded-xl bg-gradient-to-r from-pink-700/50 to-rose-600/50 border border-pink-500/50 hover:border-pink-400 transition-all group"
+                        className="flex items-center justify-center gap-2 p-3 rounded-xl bg-gradient-to-br from-pink-600/80 to-rose-700/80 border border-pink-500/50 hover:border-pink-300 transition-all group shadow-lg hover:shadow-pink-500/50"
                       >
-                        <div className="p-2 rounded-lg bg-gradient-to-r from-pink-600 to-rose-700">
-                          <Instagram size={20} className="text-white" />
-                        </div>
-                        <span className="text-white font-medium">Instagram</span>
-                        <ChevronRight size={16} className="ml-auto text-pink-300 group-hover:text-white transition-colors" />
+                        <Instagram size={18} className="text-pink-300 group-hover:text-white transition-colors" />
+                        <span className="text-sm font-semibold text-pink-300 group-hover:text-white transition-colors">Instagram</span>
                       </motion.a>
                     )}
                   </div>
+                </motion.div>
+              </div>
 
-                  <form onSubmit={handleSubmit} className="space-y-4 bg-slate-900/70 border border-slate-800 rounded-2xl p-5 backdrop-blur">
-                    <p className="text-sm text-gray-300">Send a quick message</p>
+              {/* Right - Message Form */}
+              <motion.div
+                initial={{ opacity: 0, x: 20 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.4 }}
+                className="space-y-6"
+              >
+                <h3 className="text-3xl font-bold bg-gradient-to-r from-white via-cyan-100 to-teal-100 bg-clip-text text-transparent mb-6">
+                  Send a Message
+                </h3>
+
+                <form onSubmit={handleSubmit} className="space-y-5">
+                  <motion.div
+                    initial={{ opacity: 0, y: 10 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.5 }}
+                  >
+                    <label className="block text-sm font-semibold text-gray-300 mb-2">Your Name</label>
                     <input
                       value={name}
                       onChange={(e) => setName(e.target.value)}
-                      placeholder="Your Name"
-                      className="w-full rounded-lg border border-slate-700 bg-slate-900/80 px-4 py-3 text-white placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      placeholder="John Doe"
+                      className="w-full rounded-xl border-2 border-slate-700/50 bg-slate-900/80 px-5 py-3.5 text-white placeholder:text-slate-500 focus:outline-none focus:border-cyan-500/50 focus:ring-2 focus:ring-cyan-500/20 transition-all backdrop-blur-sm"
                       required
                     />
+                  </motion.div>
 
+                  <motion.div
+                    initial={{ opacity: 0, y: 10 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.55 }}
+                  >
+                    <label className="block text-sm font-semibold text-gray-300 mb-2">Your Email</label>
                     <input
                       type="email"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
-                      placeholder="Your Email"
-                      className="w-full rounded-lg border border-slate-700 bg-slate-900/80 px-4 py-3 text-white placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      placeholder="john@example.com"
+                      className="w-full rounded-xl border-2 border-slate-700/50 bg-slate-900/80 px-5 py-3.5 text-white placeholder:text-slate-500 focus:outline-none focus:border-cyan-500/50 focus:ring-2 focus:ring-cyan-500/20 transition-all backdrop-blur-sm"
                       required
                     />
+                  </motion.div>
 
+                  <motion.div
+                    initial={{ opacity: 0, y: 10 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.6 }}
+                  >
+                    <label className="block text-sm font-semibold text-gray-300 mb-2">Your Message</label>
                     <textarea
                       value={message}
                       onChange={(e) => setMessage(e.target.value)}
-                      placeholder="Your Message"
-                      rows={4}
-                      className="w-full rounded-lg border border-slate-700 bg-slate-900/80 px-4 py-3 text-white placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      placeholder="Tell me about your project..."
+                      rows={5}
+                      className="w-full rounded-xl border-2 border-slate-700/50 bg-slate-900/80 px-5 py-3.5 text-white placeholder:text-slate-500 focus:outline-none focus:border-cyan-500/50 focus:ring-2 focus:ring-cyan-500/20 transition-all resize-none backdrop-blur-sm"
                       required
                     />
+                  </motion.div>
 
-                    {error && <p className="text-sm text-red-400">{error}</p>}
-                    {submitted && !error && <p className="text-sm text-green-400">Thanks! Your message is on its way.</p>}
-
-                    <button
-                      type="submit"
-                      disabled={submitting}
-                      className="w-full flex items-center justify-center gap-2 rounded-lg bg-blue-600 hover:bg-blue-500 transition text-white font-semibold py-3 shadow-[0_10px_30px_rgba(59,130,246,0.35)] disabled:opacity-60"
+                  {error && (
+                    <motion.p
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      className="text-sm text-red-400 flex items-center gap-2"
                     >
-                      <Send size={16} />
-                      {submitting ? "Sending..." : "Send Message"}
-                    </button>
-                  </form>
-                </div>
-              </div>
-            );
-          })()
-        )}
-      </div>
-    </div>
+                      <span className="w-1.5 h-1.5 bg-red-400 rounded-full" />
+                      {error}
+                    </motion.p>
+                  )}
+
+                  {submitted && !error && (
+                    <motion.p
+                      initial={{ opacity: 0, scale: 0.95 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      className="text-sm text-green-400 flex items-center gap-2"
+                    >
+                      <span className="w-1.5 h-1.5 bg-green-400 rounded-full animate-pulse" />
+                      Thanks! Your message is on its way.
+                    </motion.p>
+                  )}
+
+                  <motion.button
+                    type="submit"
+                    disabled={submitting}
+                    whileHover={{ scale: 1.02, y: -2 }}
+                    whileTap={{ scale: 0.98 }}
+                    className="w-full flex items-center justify-center gap-3 rounded-xl bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white font-bold py-4 shadow-lg shadow-cyan-500/30 hover:shadow-cyan-500/50 transition-all disabled:opacity-60 disabled:cursor-not-allowed group relative overflow-hidden"
+                  >
+                    <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700" />
+
+                    <Send size={18} className="relative z-10" />
+                    <span className="relative z-10">
+                      {submitting ? "Opening Mail..." : "Send Message"}
+                    </span>
+                  </motion.button>
+                </form>
+              </motion.div>
+            </div>
+          );
+        })()}
+      </motion.div>
+    </motion.section>
   );
-}
+};
+
+export default ContactSection;

@@ -1,405 +1,421 @@
 "use client";
-
-import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, ChevronLeft, ChevronRight, Image as ImageIcon, Download, Share2, Check } from "lucide-react";
+import Image from "next/image";
+import { ChevronLeft, ChevronRight, Eye, X, Image as ImageIcon } from "lucide-react";
+import React, { useState } from "react";
 
 interface GalleryItem {
-  _id: string;
-  title: string;
+  _id?: string;
+  title?: string;
   description?: string;
-  images: string[];
-  createdAt: string;
+  images?: string[];
+  image?: string;
+  url?: string;
+  imageUrl?: string;
+  src?: string;
 }
 
-export default function GalleryPage() {
-  const [galleries, setGalleries] = useState<GalleryItem[]>([]);
-  const [selectedGallery, setSelectedGallery] = useState<GalleryItem | null>(null);
+interface SectionHeaderProps {
+  title: string;
+  subtitle: string;
+  codeComment: string;
+}
+
+interface GallerySectionProps {
+  gallery: GalleryItem[];
+  SectionHeader: React.ComponentType<SectionHeaderProps>;
+}
+
+const GallerySection: React.FC<GallerySectionProps> = ({ gallery, SectionHeader }) => {
+  const [isAlbumModalOpen, setIsAlbumModalOpen] = useState(false);
+  const [selectedAlbumItem, setSelectedAlbumItem] = useState<GalleryItem | null>(null);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const [loading, setLoading] = useState(true);
-  const [thumbnailScroll, setThumbnailScroll] = useState(0);
-  const [selectedIndices, setSelectedIndices] = useState<number[]>([]);
-
-  useEffect(() => {
-    const fetchGalleries = async () => {
-      try {
-        const res = await fetch("/api/gallery");
-        const data = await res.json();
-        setGalleries(data);
-      } catch (error) {
-        console.error("Failed to load galleries:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchGalleries();
-  }, []);
-
-  const openGallery = (gallery: GalleryItem) => {
-    setSelectedGallery(gallery);
-    setCurrentImageIndex(0);
-    setThumbnailScroll(0);
-    setSelectedIndices([]);
-    document.body.style.overflow = "hidden";
-  };
-
-  const closeGallery = () => {
-    setSelectedGallery(null);
-    setCurrentImageIndex(0);
-    setThumbnailScroll(0);
-    setSelectedIndices([]);
-    document.body.style.overflow = "auto";
-  };
-
-  const nextImage = () => {
-    if (selectedGallery) {
-      setCurrentImageIndex((prev) => 
-        prev < selectedGallery.images.length - 1 ? prev + 1 : 0
-      );
-    }
-  };
-
-  const prevImage = () => {
-    if (selectedGallery) {
-      setCurrentImageIndex((prev) => 
-        prev > 0 ? prev - 1 : selectedGallery.images.length - 1
-      );
-    }
-  };
-
-  const goToImage = (index: number) => {
-    setCurrentImageIndex(index);
-  };
-
-  const toggleSelected = (idx: number) => {
-    setSelectedIndices((prev) =>
-      prev.includes(idx) ? prev.filter((i) => i !== idx) : [...prev, idx]
-    );
-  };
-
-  const downloadSelected = () => {
-    if (!selectedGallery || selectedIndices.length === 0) return;
-    selectedIndices.forEach((idx) => {
-      const url = selectedGallery.images[idx];
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = `image-${idx + 1}`;
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-    });
-  };
-
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-black flex items-center justify-center">
-        <div className="text-center">
-          <div className="h-16 w-16 animate-spin rounded-full border-4 border-pink-500 border-t-transparent mx-auto"></div>
-          <p className="text-white mt-4 text-lg">Loading galleries...</p>
-        </div>
-      </div>
-    );
-  }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-black py-20 px-4">
-      <div className="max-w-7xl mx-auto">
-        {/* Header */}
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="text-center mb-16"
-        >
-          <h1 className="text-5xl md:text-7xl font-bold text-white mb-4">
-            <span className="bg-gradient-to-r from-pink-400 via-purple-400 to-indigo-400 bg-clip-text text-transparent">
-              Gallery Collection
-            </span>
-          </h1>
-          <p className="text-gray-300 text-lg md:text-xl">
-            Explore our curated collection of moments and memories
-          </p>
-        </motion.div>
+    <motion.section
+      id="gallery"
+      initial={{ opacity: 0 }}
+      whileInView={{ opacity: 1 }}
+      viewport={{ once: true }}
+      className="scroll-mt-20"
+    >
+      <SectionHeader
+        title="Gallery"
+        subtitle="Explore snapshots from projects and moments across my journey"
+        codeComment="// await loadImages();"
+      />
 
-        {/* Galleries Grid */}
-        {galleries.length === 0 ? (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="text-center py-20"
+      {gallery.length === 0 ? (
+        <div className="flex gap-6 overflow-x-auto pb-4">
+          {[1, 2, 3, 4, 5, 6].map((i) => (
+            <div key={i} className="flex-shrink-0 w-80 h-96 rounded-2xl bg-gradient-to-br from-white/5 to-transparent border border-white/10 animate-pulse" />
+          ))}
+        </div>
+      ) : (
+        <div className="relative group">
+          {/* Left Arrow */}
+          <motion.button
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
+            onClick={() => {
+              const container = document.getElementById("gallery-scroll");
+              if (container) {
+                container.scrollBy({
+                  left: -400,
+                  behavior: "smooth",
+                });
+              }
+            }}
+            className="absolute -left-6 top-1/2 -translate-y-1/2 z-20 p-2 rounded-full bg-white/10 hover:bg-blue-600/50 text-white opacity-0 group-hover:opacity-100 transition-opacity backdrop-blur-sm shadow-lg"
           >
-            <ImageIcon className="h-24 w-24 text-gray-600 mx-auto mb-4" />
-            <p className="text-gray-400 text-xl">No galleries available yet</p>
-          </motion.div>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {galleries.map((gallery, index) => (
-              <motion.div
-                key={gallery._id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.1 }}
-                whileHover={{ y: -8, scale: 1.02 }}
-                onClick={() => openGallery(gallery)}
-                className="relative group cursor-pointer rounded-3xl overflow-hidden bg-gradient-to-br from-pink-500/10 to-purple-500/10 backdrop-blur-sm border border-pink-500/20 shadow-xl hover:shadow-pink-500/20 transition-all duration-300"
-              >
-                {/* Thumbnail */}
-                <div className="relative h-64 overflow-hidden">
-                  <img
-                    src={gallery.images[0]}
-                    alt={gallery.title}
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+            <ChevronLeft className="w-6 h-6" />
+          </motion.button>
+
+          {/* Scrollable Gallery */}
+          <div
+            id="gallery-scroll"
+            className="flex gap-6 overflow-x-auto pb-4 scroll-smooth"
+            style={{
+              scrollBehavior: "smooth",
+              scrollbarWidth: "thin",
+              scrollbarColor: "rgba(59, 130, 246, 0.3) transparent",
+            }}
+          >
+            {gallery.map((g, i) => {
+              const src = g.images?.[0] || g.image || g.url || g.imageUrl || g.src;
+              const alt = g.title || "Gallery item";
+              const imageCount = g.images?.length || 1;
+
+              const galleryColorSchemes = [
+                { glow: "from-blue-600/20 to-cyan-600/20" },
+                { glow: "from-sky-600/20 to-blue-600/20" },
+                { glow: "from-cyan-600/20 to-sky-600/20" },
+              ];
+              const galleryColorScheme = galleryColorSchemes[i % 3];
+
+              return (
+                <motion.figure
+                  key={g._id || src}
+                  initial={{ opacity: 0, y: 40, scale: 0.9 }}
+                  whileInView={{ opacity: 1, y: 0, scale: 1 }}
+                  viewport={{ once: true }}
+                  transition={{
+                    delay: i * 0.08,
+                    type: "spring",
+                    stiffness: 80,
+                    damping: 15,
+                  }}
+                  whileHover={{
+                    y: -12,
+                    scale: 1.03,
+                    rotateY: 3,
+                    transition: { duration: 0.3 },
+                  }}
+                  className="flex-shrink-0 w-80 group/item relative overflow-hidden rounded-3xl border-2 border-blue-500/20 bg-gradient-to-br from-blue-500/5 to-transparent backdrop-blur-md cursor-pointer shadow-xl hover:shadow-blue-500/20"
+                  onClick={() => {
+                    if (imageCount > 1) {
+                      setSelectedAlbumItem(g);
+                      setCurrentImageIndex(0);
+                      setIsAlbumModalOpen(true);
+                    }
+                  }}
+                >
+                  {/* Animated border glow */}
+                  <motion.div
+                    className={`absolute inset-0 bg-gradient-to-br ${galleryColorScheme.glow} opacity-0 group-hover/card:opacity-100 transition-opacity duration-500`}
+                    animate={{
+                      scale: [1, 1.05, 1],
+                    }}
+                    transition={{
+                      duration: 3,
+                      repeat: Number.POSITIVE_INFINITY,
+                      ease: "easeInOut",
+                    }}
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
-                  
-                  {/* Image Count Badge */}
-                  <div className="absolute top-4 right-4 bg-black/70 backdrop-blur-sm text-white px-3 py-1.5 rounded-full text-sm font-medium flex items-center gap-2">
-                    <ImageIcon size={16} />
-                    {gallery.images.length}
-                  </div>
-                </div>
 
-                {/* Content */}
-                <div className="p-6">
-                  <h3 className="text-2xl font-bold text-white mb-2 group-hover:text-pink-400 transition-colors">
-                    {gallery.title}
-                  </h3>
-                  {gallery.description && (
-                    <p className="text-gray-400 line-clamp-2 mb-4">
-                      {gallery.description}
-                    </p>
+                  {/* Thumbnail Image */}
+                  {src ? (
+                    <div className="relative h-96 w-full overflow-hidden rounded-3xl">
+                      <Image
+                        src={src}
+                        alt={alt}
+                        className="h-full w-full object-cover transition-all duration-700 group-hover/item:scale-125 group-hover/item:rotate-2"
+                        width={320}
+                        height={384}
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-60 group-hover/item:opacity-90 transition-opacity duration-500" />
+
+                      {/* Shimmer effect */}
+                      <motion.div
+                        className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent"
+                        initial={{ x: "-100%" }}
+                        whileHover={{ x: "100%" }}
+                        transition={{ duration: 0.8 }}
+                      />
+                    </div>
+                  ) : (
+                    <div className="h-96 w-full flex items-center justify-center bg-gradient-to-br from-blue-900/20 to-cyan-900/20 rounded-3xl">
+                      <ImageIcon size={56} className="text-blue-400/50" />
+                    </div>
                   )}
-                  <div className="flex items-center justify-between text-sm text-gray-500">
-                    <span>{new Date(gallery.createdAt).toLocaleDateString()}</span>
-                    <span className="text-pink-400 font-medium group-hover:translate-x-2 transition-transform">
-                      View Gallery →
-                    </span>
-                  </div>
-                </div>
 
-                {/* Hover Gradient Effect */}
-                <div className="absolute inset-0 bg-gradient-to-r from-pink-500/0 to-purple-500/0 group-hover:from-pink-500/10 group-hover:to-purple-500/10 transition-all duration-300 pointer-events-none" />
-              </motion.div>
+                  {/* Image Count Badge */}
+                  {imageCount > 1 && (
+                    <div className="absolute top-4 right-4 px-3 py-1.5 rounded-full bg-black/70 backdrop-blur-sm text-white text-xs font-semibold flex items-center gap-1">
+                      <ImageIcon size={14} />
+                      +{imageCount - 1} more
+                    </div>
+                  )}
+
+                  {/* Enhanced Caption Overlay */}
+                  {g.title && (
+                    <motion.figcaption
+                      initial={{ y: "100%" }}
+                      whileHover={{ y: 0 }}
+                      className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black via-black/95 to-transparent"
+                    >
+                      <motion.h4
+                        className="text-white font-bold text-lg mb-2 line-clamp-2"
+                        initial={{ opacity: 0, y: 10 }}
+                        whileHover={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.1 }}
+                      >
+                        {g.title}
+                      </motion.h4>
+                      {g.description && (
+                        <motion.p
+                          className="text-gray-300 text-sm line-clamp-2"
+                          initial={{ opacity: 0, y: 10 }}
+                          whileHover={{ opacity: 1, y: 0 }}
+                          transition={{ delay: 0.15 }}
+                        >
+                          {g.description}
+                        </motion.p>
+                      )}
+
+                      {/* View indicator */}
+                      <motion.div
+                        className="mt-3 flex items-center gap-2 text-blue-400 text-xs font-semibold"
+                        initial={{ opacity: 0 }}
+                        whileHover={{ opacity: 1 }}
+                        transition={{ delay: 0.2 }}
+                      >
+                        <Eye size={14} />
+                        <span>Click to view</span>
+                      </motion.div>
+                    </motion.figcaption>
+                  )}
+
+                  {/* Floating indicator badge */}
+                  <motion.div
+                    className="absolute top-4 left-4"
+                    initial={{ scale: 0, rotate: -180 }}
+                    animate={{ scale: 1, rotate: 0 }}
+                    transition={{ delay: i * 0.1, type: "spring" }}
+                  >
+                    <div className="p-2.5 rounded-full bg-gradient-to-br from-blue-600/90 to-cyan-600/90 backdrop-blur-md shadow-lg opacity-0 group-hover:item:opacity-100 transition-opacity">
+                      <Eye size={18} className="text-white" />
+                    </div>
+                  </motion.div>
+
+                  {/* Particle effects */}
+                  <div className="absolute inset-0 overflow-hidden pointer-events-none rounded-3xl">
+                    {[...Array(4)].map((_, idx) => (
+                      <motion.div
+                        key={idx}
+                        className="absolute h-1 w-1 rounded-full bg-blue-400/60"
+                        initial={{
+                          x: Math.random() * 100 + "%",
+                          y: "100%",
+                          opacity: 0,
+                        }}
+                        animate={{
+                          y: "-10%",
+                          opacity: [0, 1, 0],
+                          scale: [0, 1.5, 0],
+                        }}
+                        transition={{
+                          duration: 2.5,
+                          delay: idx * 0.5,
+                          repeat: Number.POSITIVE_INFINITY,
+                          repeatDelay: 1.5,
+                          ease: "easeOut",
+                        }}
+                      />
+                    ))}
+                  </div>
+
+                  {/* Index number */}
+                  <div className="absolute bottom-4 left-4 w-8 h-8 rounded-full bg-black/60 backdrop-blur-sm flex items-center justify-center">
+                    <span className="text-blue-400 text-xs font-bold">{i + 1}</span>
+                  </div>
+                </motion.figure>
+              );
+            })}
+          </div>
+
+          {/* Right Arrow */}
+          <motion.button
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
+            onClick={() => {
+              const container = document.getElementById("gallery-scroll");
+              if (container) {
+                container.scrollBy({
+                  left: 400,
+                  behavior: "smooth",
+                });
+              }
+            }}
+            className="absolute -right-6 top-1/2 -translate-y-1/2 z-20 p-2 rounded-full bg-white/10 hover:bg-blue-600/50 text-white opacity-0 group-hover:opacity-100 transition-opacity backdrop-blur-sm shadow-lg"
+          >
+            <ChevronRight className="w-6 h-6" />
+          </motion.button>
+
+          {/* Progress indicator */}
+          <div className="absolute bottom-0 left-1/2 -translate-x-1/2 flex gap-2">
+            {gallery.slice(0, Math.min(gallery.length, 8)).map((_, i) => (
+              <div key={i} className="w-2 h-2 rounded-full bg-blue-500/30" />
             ))}
           </div>
-        )}
-      </div>
+        </div>
+      )}
 
-      {/* Lightbox Modal */}
+      {/* Album Modal - View All Images */}
       <AnimatePresence>
-        {selectedGallery && (
+        {isAlbumModalOpen && selectedAlbumItem && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/95 z-50 flex flex-col items-center justify-center p-4"
-            onClick={closeGallery}
+            onClick={() => setIsAlbumModalOpen(false)}
+            className="fixed inset-0 bg-black/90 backdrop-blur-sm z-50 flex items-center justify-center p-4"
           >
-            {/* Close Button */}
-            <motion.button
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={closeGallery}
-              className="absolute top-6 right-6 p-3 bg-white/10 hover:bg-white/20 rounded-full text-white backdrop-blur-sm transition-all z-10"
-            >
-              <X size={24} />
-            </motion.button>
-
-            {/* Gallery Info Header */}
-            <motion.div 
-              initial={{ opacity: 0, y: -20 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="absolute top-6 left-6 bg-black/50 backdrop-blur-sm rounded-2xl p-6 max-w-md z-10 border border-white/10"
-            >
-              <h2 className="text-2xl font-bold text-white mb-2">
-                {selectedGallery.title}
-              </h2>
-              {selectedGallery.description && (
-                <p className="text-gray-300 text-sm mb-3">
-                  {selectedGallery.description}
-                </p>
-              )}
-              <div className="flex items-center justify-between text-sm">
-                <span className="text-pink-400 font-semibold">
-                  {currentImageIndex + 1} / {selectedGallery.images.length}
-                </span>
-                <div className="w-48 h-1 bg-gray-700 rounded-full overflow-hidden">
-                  <motion.div
-                    className="h-full bg-gradient-to-r from-pink-500 to-purple-500"
-                    initial={{ width: 0 }}
-                    animate={{ width: `${((currentImageIndex + 1) / selectedGallery.images.length) * 100}%` }}
-                    transition={{ duration: 0.3 }}
-                  />
-                </div>
-              </div>
-            </motion.div>
-
-            {/* Main Image Container */}
             <motion.div
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
               onClick={(e) => e.stopPropagation()}
-              className="relative w-full max-w-4xl max-h-[70vh] flex items-center justify-center"
+              className="bg-gradient-to-br from-black/95 to-black/85 border-2 border-blue-500/30 rounded-3xl overflow-hidden max-w-5xl w-full max-h-[90vh] flex flex-col relative"
             >
-              {/* Navigation Arrows */}
-              {selectedGallery.images.length > 1 && (
-                <>
-                  <motion.button
-                    whileHover={{ scale: 1.1, x: -4 }}
-                    whileTap={{ scale: 0.95 }}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      prevImage();
-                    }}
-                    className="absolute left-4 top-1/2 -translate-y-1/2 p-4 bg-white/10 hover:bg-white/20 rounded-full text-white backdrop-blur-sm transition-all z-10 group"
-                  >
-                    <ChevronLeft size={32} className="group-hover:text-pink-400 transition-colors" />
-                  </motion.button>
-                  <motion.button
-                    whileHover={{ scale: 1.1, x: 4 }}
-                    whileTap={{ scale: 0.95 }}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      nextImage();
-                    }}
-                    className="absolute right-4 top-1/2 -translate-y-1/2 p-4 bg-white/10 hover:bg-white/20 rounded-full text-white backdrop-blur-sm transition-all z-10 group"
-                  >
-                    <ChevronRight size={32} className="group-hover:text-pink-400 transition-colors" />
-                  </motion.button>
-                </>
-              )}
-
-              {/* Main Image */}
-              <AnimatePresence mode="wait">
-                <motion.img
-                  key={currentImageIndex}
-                  src={selectedGallery.images[currentImageIndex]}
-                  alt={`${selectedGallery.title} - ${currentImageIndex + 1}`}
-                  initial={{ opacity: 0, x: 100 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -100 }}
-                  transition={{ duration: 0.3 }}
-                  className="w-full h-full object-contain rounded-2xl"
-                />
-              </AnimatePresence>
-
-              {/* Action Buttons */}
-              <div className="absolute bottom-6 right-6 flex gap-3 z-10">
+              {/* Header */}
+              <div className="p-6 border-b border-blue-500/20 flex items-center justify-between">
+                <div>
+                  <h3 className="text-2xl font-bold text-white mb-1">{selectedAlbumItem.title || "Album"}</h3>
+                  <p className="text-gray-400 text-sm">{selectedAlbumItem.images?.length || 1} images</p>
+                </div>
                 <motion.button
-                  whileHover={{ scale: 1.1 }}
+                  whileHover={{ scale: 1.1, rotate: 90 }}
                   whileTap={{ scale: 0.95 }}
-                  className="p-3 bg-white/10 hover:bg-white/20 rounded-full text-white backdrop-blur-sm transition-all"
-                  title="Download image"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    if (!selectedGallery) return;
-                    const a = document.createElement("a");
-                    a.href = selectedGallery.images[currentImageIndex];
-                    a.download = `image-${currentImageIndex + 1}`;
-                    document.body.appendChild(a);
-                    a.click();
-                    a.remove();
-                  }}
+                  onClick={() => setIsAlbumModalOpen(false)}
+                  className="p-2 rounded-full bg-blue-500/20 hover:bg-blue-500/40 text-white transition-all"
                 >
-                  <Download size={20} />
-                </motion.button>
-                {/* Download selected (only shown when any selected) */}
-                {selectedIndices.length > 0 && (
-                  <motion.button
-                    whileHover={{ scale: 1.1 }}
-                    whileTap={{ scale: 0.95 }}
-                    className="p-3 bg-pink-600/70 hover:bg-pink-600 rounded-full text-white backdrop-blur-sm transition-all"
-                    title={`Download ${selectedIndices.length} selected`}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      downloadSelected();
-                    }}
-                  >
-                    <Download size={20} />
-                  </motion.button>
-                )}
-                <motion.button
-                  whileHover={{ scale: 1.1 }}
-                  whileTap={{ scale: 0.95 }}
-                  className="p-3 bg-white/10 hover:bg-white/20 rounded-full text-white backdrop-blur-sm transition-all"
-                  title="Share image"
-                >
-                  <Share2 size={20} />
+                  <X className="w-6 h-6" />
                 </motion.button>
               </div>
-            </motion.div>
 
-            {/* Thumbnails Strip */}
-            {selectedGallery.images.length > 1 && (
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="absolute bottom-6 left-0 right-0 flex justify-center"
-              >
-                <div className="flex gap-2 bg-black/50 backdrop-blur-sm rounded-2xl p-4 border border-white/10 max-w-4xl overflow-x-auto">
-                  {selectedGallery.images.map((img, idx) => {
-                    const isSelected = selectedIndices.includes(idx);
-                    return (
-                      <div key={idx} className="relative">
-                        {/* Select overlay toggle */}
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            toggleSelected(idx);
-                          }}
-                          aria-pressed={isSelected}
-                          aria-label={`Select image ${idx + 1}`}
-                          className={`absolute -top-2 -left-2 z-10 p-1.5 rounded-full border text-white ${
-                            isSelected
-                              ? "bg-pink-600 border-pink-400"
-                              : "bg-black/60 border-white/30 hover:bg-white/20"
-                          }`}
-                        >
-                          {isSelected ? <Check size={14} /> : <span className="block w-3 h-3" />}
-                        </button>
+              {/* Main Image Display */}
+              <div className="flex-1 overflow-hidden flex items-center justify-center bg-black/50 relative">
+                <AnimatePresence mode="wait">
+                  <motion.div
+                    key={currentImageIndex}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.3 }}
+                    className="relative w-full h-full flex items-center justify-center"
+                  >
+                    <Image
+                      src={selectedAlbumItem.images?.[currentImageIndex] || selectedAlbumItem.image}
+                      alt={`${selectedAlbumItem.title} - Image ${currentImageIndex + 1}`}
+                      className="max-w-full max-h-full object-contain"
+                      width={800}
+                      height={600}
+                    />
 
+                    {/* Image Counter */}
+                    <div className="absolute top-4 right-4 px-3 py-1.5 rounded-full bg-black/70 backdrop-blur-sm border border-blue-500/30">
+                      <span className="text-blue-300 font-semibold text-sm">
+                        {currentImageIndex + 1} / {selectedAlbumItem.images?.length || 1}
+                      </span>
+                    </div>
+
+                    {/* Navigation Arrows */}
+                    {selectedAlbumItem.images && selectedAlbumItem.images.length > 1 && (
+                      <>
                         <motion.button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            goToImage(idx);
-                          }}
-                          whileHover={{ scale: 1.05 }}
+                          whileHover={{ scale: 1.1 }}
                           whileTap={{ scale: 0.95 }}
-                          className={`flex-shrink-0 w-16 h-16 rounded-lg overflow-hidden border-2 transition-all relative ${
-                            idx === currentImageIndex
-                              ? "border-pink-500 ring-2 ring-pink-500/50 scale-110"
-                              : "border-white/30 opacity-60 hover:opacity-100"
-                          } ${isSelected ? "outline outline-2 outline-pink-500" : ""}`}
+                          onClick={() =>
+                            setCurrentImageIndex(
+                              (prev) =>
+                                (prev - 1 + selectedAlbumItem.images.length) %
+                                selectedAlbumItem.images.length
+                            )
+                          }
+                          className="absolute left-4 p-3 rounded-full bg-blue-600/80 hover:bg-blue-500 text-white transition-all shadow-lg"
                         >
-                          <img
-                            src={img}
-                            alt={`Thumbnail ${idx + 1}`}
-                            className="w-full h-full object-cover"
-                          />
-                          {isSelected && (
-                            <div className="absolute inset-0 bg-pink-500/20 pointer-events-none" />
-                          )}
+                          <ChevronLeft className="w-6 h-6" />
                         </motion.button>
-                      </div>
-                    );
-                  })}
-                </div>
-              </motion.div>
-            )}
+                        <motion.button
+                          whileHover={{ scale: 1.1 }}
+                          whileTap={{ scale: 0.95 }}
+                          onClick={() =>
+                            setCurrentImageIndex(
+                              (prev) => (prev + 1) % selectedAlbumItem.images.length
+                            )
+                          }
+                          className="absolute right-4 p-3 rounded-full bg-blue-600/80 hover:bg-blue-500 text-white transition-all shadow-lg"
+                        >
+                          <ChevronRight className="w-6 h-6" />
+                        </motion.button>
+                      </>
+                    )}
+                  </motion.div>
+                </AnimatePresence>
+              </div>
 
-            {/* Keyboard Navigation Hint */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.5 }}
-              className="absolute bottom-6 left-6 text-xs text-gray-400 bg-black/50 backdrop-blur-sm rounded-lg px-3 py-2 border border-white/10"
-            >
-              Use arrow keys to navigate • ESC to close
+              {/* Thumbnail Strip */}
+              {selectedAlbumItem.images && selectedAlbumItem.images.length > 1 && (
+                <div className="p-4 border-t border-blue-500/20 bg-black/50 overflow-x-auto max-h-32">
+                  <div className="flex gap-3">
+                    {selectedAlbumItem.images.map((img: string, idx: number) => (
+                      <motion.button
+                        key={idx}
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                        onClick={() => setCurrentImageIndex(idx)}
+                        className={`flex-shrink-0 w-20 h-20 rounded-lg overflow-hidden border-2 transition-all ${
+                          currentImageIndex === idx
+                            ? "border-blue-400 shadow-lg shadow-blue-500/50"
+                            : "border-blue-500/20 opacity-60 hover:opacity-100"
+                        }`}
+                      >
+                        <Image
+                          src={img}
+                          alt={`Thumbnail ${idx + 1}`}
+                          className="w-full h-full object-cover"
+                          width={80}
+                          height={80}
+                        />
+                      </motion.button>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Keyboard Navigation Hint */}
+              <div className="px-6 py-3 text-center text-gray-400 text-xs border-t border-blue-500/10">
+                <span className="inline-block">
+                  Use arrow buttons or arrow keys to navigate • ESC to close
+                </span>
+              </div>
             </motion.div>
           </motion.div>
         )}
       </AnimatePresence>
-    </div>
+    </motion.section>
   );
-}
+};
+
+export default GallerySection;

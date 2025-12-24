@@ -1,218 +1,222 @@
 "use client";
-
 import { motion } from "framer-motion";
-import { ExternalLink, Github, Smartphone, Globe, Users } from "lucide-react";
+import Image from "next/image";
+import { Globe, Github, Terminal, ChevronLeft, ChevronRight, Image as ImageIcon } from "lucide-react";
+import React from "react";
 
 interface Project {
-  id: string;
-  title: string;
-  description: string;
-  longDescription: string;
-  technologies: string[];
-  type: "individual" | "team";
-  year: string;
-  icon: React.ReactNode;
+  _id?: string;
+  title?: string;
+  name?: string;
+  description?: string;
+  summary?: string;
   github?: string;
-  demo?: string;
+  repoUrl?: string;
+  githubLink?: string;
+  liveLink?: string;
+  link?: string;
   imageUrl?: string;
+  tags?: string[];
+  tech?: string[];
+  type?: string;
 }
 
-const projects: Project[] = [
-  {
-    id: "1",
-    title: "Agrow",
-    description: "Agriculture Mobile App",
-    longDescription:
-      "A mobile application encouraging youth engagement in agriculture through educational content and e-commerce features. Includes video tutorials, articles, and a buy/sell platform.",
-    technologies: ["Kotlin", "Android Studio", "Firebase", "Figma"],
-    type: "individual",
-    year: "2025",
-    icon: <Smartphone className="w-6 h-6" />,
-    github: "https://github.com/Saayinath",
-    imageUrl: "/agrow.jpg",
-  },
-  {
-    id: "2",
-    title: "FinMate",
-    description: "Personal Finance Tracker",
-    longDescription:
-      "Mobile application for managing personal finances with income/expense tracking, budget analysis, spending insights, and intuitive dashboards with pie chart visualizations.",
-    technologies: ["Kotlin", "Android Studio", "Room Database", "MPAndroidChart", "Figma"],
-    type: "individual",
-    year: "2025",
-    icon: <Smartphone className="w-6 h-6" />,
-    github: "https://github.com/Saayinath",
-    imageUrl: "/finmate.jpg",
-  },
-  {
-    id: "3",
-    title: "Cloud Kitchen Platform",
-    description: "Community Forum Module",
-    longDescription:
-      "Collaborated in a team project for a Cloud Kitchen platform, designing and developing the Community Forum component with user posts, comment threads, and moderation features.",
-    technologies: ["MongoDB", "Express.js", "React.js", "Node.js", "Tailwind CSS"],
-    type: "team",
-    year: "2025",
-    icon: <Globe className="w-6 h-6" />,
-    github: "https://github.com/Saayinath",
-    imageUrl: "/cloud-kitchen.jpg",
-  },
-];
+interface ProjectsSectionProps {
+  projects: Project[];
+  SectionHeader: React.ComponentType<{
+    title: string;
+    subtitle: string;
+    codeComment: string;
+  }>;
+}
 
-export default function ProjectsPage() {
+const ProjectsSection: React.FC<ProjectsSectionProps> = ({ projects, SectionHeader }) => {
   return (
-    <div id="top" className="space-y-6 max-w-4xl mx-auto px-6 py-12">
-      <h1 className="text-3xl font-bold">Projects</h1>
+    <motion.section
+      id="projects"
+      initial={{ opacity: 0 }}
+      whileInView={{ opacity: 1 }}
+      viewport={{ once: true }}
+      className="scroll-mt-20"
+    >
+      <SectionHeader
+        title="Projects"
+        subtitle="A collection of my best work and creative solutions"
+        codeComment="// projects[]"
+      />
 
-      <section id="projects" className="py-24 px-6 relative">
-        {/* Background accent */}
-        <div className="absolute inset-0 -z-10">
-          <div className="absolute top-1/2 right-0 w-96 h-96 bg-blue-600/5 rounded-full blur-3xl" />
+      {projects.length === 0 ? (
+        <div className="flex gap-6 overflow-x-auto pb-4">
+          {[1, 2, 3, 4].map((i) => (
+            <div
+              key={i}
+              className="flex-shrink-0 w-96 h-96 rounded-2xl bg-gradient-to-br from-white/5 to-transparent border border-white/10 animate-pulse"
+            />
+          ))}
         </div>
-
-        <div className="container max-w-6xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            className="space-y-4 mb-16"
+      ) : (
+        <div className="relative group">
+          {/* Left Arrow */}
+          <motion.button
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
+            onClick={() => {
+              const container = document.getElementById("projects-scroll");
+              if (container) {
+                container.scrollBy({
+                  left: -420,
+                  behavior: "smooth",
+                });
+              }
+            }}
+            className="absolute -left-6 top-1/2 -translate-y-1/2 z-10 p-2 rounded-full bg-white/10 hover:bg-blue-600/50 text-white opacity-0 group-hover:opacity-100 transition-opacity backdrop-blur-sm"
           >
-            <h2 className="text-3xl md:text-4xl font-bold">
-              Featured{" "}
-              <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-                Projects
-              </span>
-            </h2>
-            <p className="text-gray-600 max-w-2xl">
-              A collection of projects that showcase my skills in mobile
-              development, web development, and UI/UX design.
-            </p>
-          </motion.div>
+            <ChevronLeft className="w-6 h-6" />
+          </motion.button>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {projects.map((project, index) => (
-              <motion.div
-                key={project.id}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.1, duration: 0.6 }}
-                className="group rounded-2xl overflow-hidden bg-white border border-gray-200 hover:border-blue-600 hover:shadow-lg transition-all flex flex-col h-full relative"
-              >
-                {/* Project Image */}
-                <div className="relative h-48 overflow-hidden bg-gradient-to-br from-blue-50 to-purple-50">
-                  <img
-                    src={project.imageUrl || "/placeholder-project.jpg"}
-                    alt={project.title}
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-                </div>
+          {/* Scrollable Projects */}
+          <div
+            id="projects-scroll"
+            className="flex gap-6 overflow-x-auto pb-4 scroll-smooth"
+            style={{
+              scrollBehavior: "smooth",
+              scrollbarWidth: "thin",
+              scrollbarColor: "rgba(59, 130, 246, 0.3) transparent",
+            }}
+          >
+            {projects.map((p, i) => {
+              const title = p.title || p.name || "Untitled";
+              const desc = p.description || p.summary || "";
+              const github = p.github || p.repoUrl || p.githubLink || "";
+              const liveLink = p.liveLink || p.link || "";
+              const imageUrl = p.imageUrl || "";
+              const tags: string[] = p.tags || p.tech || [];
+              const filename = title.toLowerCase().replace(/\s+/g, "-");
 
-                <div className="p-6 flex-1 flex flex-col">
-                  {/* Header */}
-                  <div className="flex items-start justify-between mb-4">
-                    <div className="p-3 rounded-xl bg-blue-100 text-blue-600">
-                      {project.icon}
+              return (
+                <motion.article
+                  key={p._id || title}
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  whileInView={{ opacity: 1, scale: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: i * 0.05 }}
+                  whileHover={{ y: -8 }}
+                  className="flex-shrink-0 w-96 group relative rounded-2xl border-2 border-gray-800 bg-black backdrop-blur-sm overflow-hidden hover:border-gray-700 transition-all flex flex-col"
+                >
+                  {/* Terminal header */}
+                  <div className="flex items-center justify-between px-4 py-3 border-b border-blue-500/20 bg-slate-900/50">
+                    <div className="flex items-center gap-2">
+                      <div className="flex gap-1.5">
+                        <div className="w-3 h-3 rounded-full bg-red-500" />
+                        <div className="w-3 h-3 rounded-full bg-yellow-500" />
+                        <div className="w-3 h-3 rounded-full bg-green-500" />
+                      </div>
+                      <span className="text-xs text-gray-400 font-mono ml-2">{filename}.tsx</span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <span
-                        className={`text-xs px-2 py-1 rounded-full flex items-center gap-1 ${
-                          project.type === "individual"
-                            ? "bg-blue-100 text-blue-600"
-                            : "bg-gray-100 text-gray-600"
-                        }`}
-                      >
-                        {project.type === "individual" ? (
-                          "Individual"
-                        ) : (
-                          <>
-                            <Users className="w-3 h-3" /> Team
-                          </>
-                        )}
-                      </span>
+                      {liveLink && (
+                        <a
+                          href={liveLink}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="text-gray-400 hover:text-blue-400 transition-colors"
+                        >
+                          <Globe size={30} />
+                        </a>
+                      )}
+                      {github && (
+                        <a
+                          href={github}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="text-gray-400 hover:text-blue-400 transition-colors"
+                        >
+                          <Github size={30} />
+                        </a>
+                      )}
                     </div>
+                  </div>
+
+                  {/* Project Image / Placeholder */}
+                  <div className="relative h-48 overflow-hidden bg-slate-800/50">
+                    {imageUrl ? (
+                      <Image
+                        src={imageUrl}
+                        alt={title}
+                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                        width={384}
+                        height={192}
+                        priority={i === 0}
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center bg-slate-800/40">
+                        <ImageIcon className="text-slate-500" size={32} />
+                      </div>
+                    )}
+                    <div className="absolute inset-0 bg-gradient-to-t from-slate-900/90 via-slate-900/20 to-transparent" />
                   </div>
 
                   {/* Content */}
-                  <div className="flex-1">
-                    <h3 className="text-xl font-semibold mb-1 group-hover:text-blue-600 transition-colors">
-                      {project.title}
-                    </h3>
-                    <p className="text-sm text-blue-600 mb-3">
-                      {project.description}
-                    </p>
-                    <p className="text-gray-600 text-sm leading-relaxed">
-                      {project.longDescription}
-                    </p>
-                  </div>
+                  <div className="p-6 flex-1">
+                    {/* Title with Icon */}
+                    <div className="flex items-start gap-3 mb-3">
+                      <div className="p-2 rounded-lg bg-gradient-to-br from-blue-500/20 to-cyan-500/20 flex-shrink-0">
+                        <Terminal size={18} className="text-blue-400" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <h3 className="text-lg font-bold text-white mb-1 group-hover:text-blue-400 transition-colors truncate">
+                          {title}
+                        </h3>
+                        <p className="text-xs text-gray-500 font-mono">{p.type || "Web Application"}</p>
+                      </div>
+                    </div>
 
-                  {/* Technologies */}
-                  <div className="mt-4 pt-4 border-t border-gray-200">
-                    <div className="flex flex-wrap gap-2 mb-4">
-                      {project.technologies.map((tech) => (
+                    {/* Description */}
+                    <p className="text-gray-400 text-sm leading-relaxed mb-4 line-clamp-2">{desc}</p>
+
+                    {/* Tags */}
+                    <div className="flex flex-wrap gap-2">
+                      {tags.slice(0, 3).map((t: string, idx: number) => (
                         <span
-                          key={tech}
-                          className="text-xs px-2 py-1 bg-gray-100 rounded-md text-gray-600"
+                          key={t}
+                          className="px-2.5 py-1 rounded-md text-xs font-medium bg-gradient-to-r from-blue-500/10 to-cyan-500/10 text-blue-300 border border-blue-500/20"
                         >
-                          {tech}
+                          {t}
                         </span>
                       ))}
-                    </div>
-
-                    {/* Links */}
-                    <div className="flex gap-3">
-                      {project.github && (
-                        <a
-                          href={project.github}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="inline-flex items-center gap-1 text-sm text-gray-600 hover:text-blue-600 transition-colors"
-                        >
-                          <Github className="w-4 h-4" />
-                          Code
-                        </a>
-                      )}
-                      {project.demo && (
-                        <a
-                          href={project.demo}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="inline-flex items-center gap-1 text-sm text-gray-600 hover:text-blue-600 transition-colors"
-                        >
-                          <ExternalLink className="w-4 h-4" />
-                          Demo
-                        </a>
+                      {tags.length > 3 && (
+                        <span className="px-2.5 py-1 rounded-md text-xs font-medium bg-gradient-to-r from-blue-500/10 to-cyan-500/10 text-blue-300 border border-blue-500/20">
+                          +{tags.length - 3}
+                        </span>
                       )}
                     </div>
                   </div>
-
-                  {/* Year badge */}
-                  <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity">
-                    <span className="text-xs text-gray-600">{project.year}</span>
-                  </div>
-                </div>
-              </motion.div>
-            ))}
+                </motion.article>
+              );
+            })}
           </div>
 
-          {/* Admin CTA */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="mt-12 text-center"
+          {/* Right Arrow */}
+          <motion.button
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
+            onClick={() => {
+              const container = document.getElementById("projects-scroll");
+              if (container) {
+                container.scrollBy({
+                  left: 420,
+                  behavior: "smooth",
+                });
+              }
+            }}
+            className="absolute -right-6 top-1/2 -translate-y-1/2 z-10 p-2 rounded-full bg-white/10 hover:bg-blue-600/50 text-white opacity-0 group-hover:opacity-100 transition-opacity backdrop-blur-sm"
           >
-            <a
-              href="/admin"
-              className="inline-block px-6 py-2 border border-blue-600/50 text-blue-600 rounded-lg hover:bg-blue-50 transition-colors font-medium"
-            >
-              Manage Projects (Admin)
-            </a>
-          </motion.div>
+            <ChevronRight className="w-6 h-6" />
+          </motion.button>
         </div>
-      </section>
-    </div>
+      )}
+    </motion.section>
   );
-}
+};
+
+export default ProjectsSection;

@@ -1,200 +1,156 @@
 "use client";
-
-import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { GraduationCap, MapPin, Calendar, Award } from "lucide-react";
+import Image from "next/image";
+import { Calendar } from "lucide-react";
+import React from "react";
 
 interface Education {
-  _id: string;
-  institution: string;
-  degree: string;
-  field: string;
-  startDate: string;
-  endDate?: string;
-  isCurrentlyEnrolled: boolean;
-  description?: string;
-  gpa?: string;
-  activities?: string[];
+  _id?: string;
   logo?: string;
+  institution?: string;
+  school?: string;
+  field?: string;
+  isCurrentlyEnrolled?: boolean;
+  startDate?: string;
+  endDate?: string;
+  gpa?: string;
+  description?: string;
+  activities?: string[];
 }
 
-export default function EducationPage() {
-  const [educations, setEducations] = useState<Education[]>([]);
-  const [loading, setLoading] = useState(true);
+interface SectionHeaderProps {
+  title: string;
+  subtitle: string;
+  codeComment: string;
+}
 
-  useEffect(() => {
-    loadEducations();
-  }, []);
+interface EducationSectionProps {
+  education: Education[];
+  SectionHeader: React.ComponentType<SectionHeaderProps>;
+}
 
-  const loadEducations = async () => {
-    try {
-      const res = await fetch("/api/education");
-      const data = await res.json();
-      setEducations(data);
-    } catch (error) {
-      console.error("Failed to load education:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
+const EducationSection: React.FC<EducationSectionProps> = ({ education, SectionHeader }) => (
+  <motion.section
+    id="education"
+    initial={{ opacity: 0 }}
+    whileInView={{ opacity: 1 }}
+    viewport={{ once: true }}
+    className="scroll-mt-20"
+  >
+    <SectionHeader
+      title="Education"
+      subtitle="My academic journey and learning achievements"
+      codeComment="// education[]"
+    />
 
-  const formatDate = (date: string) => {
-    return new Date(date).toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "long",
-    });
-  };
-
-  return (
-    <div id="top" className="space-y-6 max-w-4xl mx-auto px-6 py-12">
-      <h1 className="text-3xl font-bold">Education</h1>
-
-      <section id="education" className="py-24 px-6 relative">
-        <div className="absolute inset-0 -z-10">
-          <div className="absolute top-1/4 right-1/4 w-80 h-80 bg-primary/5 rounded-full blur-3xl" />
-          <div className="absolute bottom-1/4 left-1/4 w-80 h-80 bg-secondary/5 rounded-full blur-3xl" />
-        </div>
-
-        <div className="container max-w-4xl mx-auto">
+    {education.length === 0 ? (
+      <div className="space-y-6">
+        {[1, 2, 3].map((i) => (
+          <div key={i} className="h-40 rounded-2xl bg-gradient-to-br from-white/5 to-transparent border border-white/10 animate-pulse" />
+        ))}
+      </div>
+    ) : (
+      <div className="relative pl-12">
+        {education.map((edu, i) => (
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
+            key={edu._id || i}
+            initial={{ opacity: 0, x: -20 }}
+            whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            className="space-y-4 mb-16"
+            transition={{ delay: i * 0.1 }}
+            className="relative group mb-8 last:mb-0"
           >
-            <h2 className="text-3xl md:text-4xl font-bold">Education</h2>
-            <p className="text-muted-foreground max-w-2xl">
-              My educational background and academic achievements
-            </p>
-          </motion.div>
+            {/* Timeline Line Segment - connects to next dot */}
+            {i < education.length - 1 && (
+              <div
+                className="absolute w-0.5 bg-gradient-to-b from-blue-500 to-blue-600"
+                style={{
+                  left: '-39.5px',
+                  top: '45px',
+                  bottom: '-45px'
+                }}
+              />
+            )}
 
-          {loading ? (
-            <div className="text-center py-12">
-              <p className="text-muted-foreground">
-                Loading education records...
-              </p>
-            </div>
-          ) : educations.length === 0 ? (
-            <div className="text-center py-12">
-              <p className="text-muted-foreground">
-                No education records available yet.
-              </p>
-            </div>
-          ) : (
-            <div className="space-y-8">
-              {educations.map((edu, index) => (
-                <motion.div
-                  key={edu._id}
-                  initial={{ opacity: 0, x: -20 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.6, delay: index * 0.1 }}
-                  className="relative"
-                >
-                  {/* Timeline dot */}
-                  <div className="absolute -left-8 top-0 w-6 h-6 rounded-full bg-primary border-4 border-white dark:border-slate-900 shadow-md" />
+            {/* Timeline Dot */}
+            <div className="absolute w-3 h-3 rounded-full bg-blue-500 border-2 border-blue-500 group-hover:bg-blue-400 group-hover:border-blue-400 transition-colors z-10" style={{ left: '-44px', top: '24px' }} />
 
-                  {/* Timeline line */}
-                  {index !== educations.length - 1 && (
-                    <div className="absolute -left-5 top-12 w-0.5 h-32 bg-gradient-to-b from-primary to-gray-300" />
-                  )}
-
-                  {/* Content */}
-                  <div className="glass rounded-2xl p-6 border border-white/20 hover:shadow-lg transition-all duration-300">
-                    <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4 mb-4">
-                      <div className="flex gap-4 flex-1">
-                        {edu.logo && (
-                          <div className="flex-shrink-0">
-                            <img
-                              src={edu.logo}
-                              alt={edu.institution}
-                              className="w-16 h-16 object-contain rounded-lg bg-white/5 p-2"
-                              onError={(e) => {
-                                e.currentTarget.style.display = 'none';
-                              }}
-                            />
-                          </div>
-                        )}
-                        <div>
-                          <h3 className="text-xl font-bold flex items-center gap-2 mb-2">
-                            <GraduationCap className="w-5 h-5 text-primary" />
-                            {edu.degree}
-                          </h3>
-                          <p className="text-lg font-semibold text-primary">
-                            {edu.institution}
-                          </p>
-                          <p className="text-sm text-muted-foreground">
-                            {edu.field}
-                          </p>
-                        </div>
-                      </div>
-
-                      {edu.isCurrentlyEnrolled && (
-                        <span className="inline-flex items-center gap-1 px-3 py-1 bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-200 rounded-full text-xs font-medium">
-                          <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
-                          Currently Enrolled
-                        </span>
-                      )}
-                    </div>
-
-                    <div className="flex flex-wrap gap-4 text-sm text-muted-foreground mb-4">
-                      <div className="flex items-center gap-2">
-                        <Calendar className="w-4 h-4 text-primary" />
-                        <span>
-                          {formatDate(edu.startDate)} -{" "}
-                          {edu.isCurrentlyEnrolled
-                            ? "Present"
-                            : edu.endDate
-                            ? formatDate(edu.endDate)
-                            : "N/A"}
-                        </span>
-                      </div>
-
-                      {edu.gpa && (
-                        <div className="flex items-center gap-2">
-                          <Award className="w-4 h-4 text-primary" />
-                          <span>GPA: {edu.gpa}</span>
-                        </div>
-                      )}
-                    </div>
-
-                    {edu.description && (
-                      <p className="text-sm text-foreground mb-4 leading-relaxed">
-                        {edu.description}
-                      </p>
-                    )}
-
-                    {edu.activities && edu.activities.length > 0 && (
-                      <div className="mt-4 pt-4 border-t border-white/10">
-                        <p className="text-sm font-semibold mb-3 flex items-center gap-2">
-                          <Award className="w-4 h-4 text-primary" />
-                          Activities & Achievements
-                        </p>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                          {edu.activities.map((activity, i) => (
-                            <motion.div
-                              key={i}
-                              initial={{ opacity: 0, y: 10 }}
-                              whileInView={{ opacity: 1, y: 0 }}
-                              viewport={{ once: true }}
-                              transition={{ duration: 0.3, delay: i * 0.05 }}
-                              className="flex items-start gap-2 text-sm"
-                            >
-                              <span className="w-1.5 h-1.5 rounded-full bg-primary flex-shrink-0 mt-1.5" />
-                              <span className="text-foreground">{activity}</span>
-                            </motion.div>
-                          ))}
-                        </div>
-                      </div>
+            {/* Card */}
+            <div className="rounded-2xl border border-gray-800/50 bg-black/50 backdrop-blur-sm p-6 transition-all group-hover:bg-black/70 hover:border-blue-500/40 hover:shadow-[0_12px_45px_rgba(59,130,246,0.25)] hover:-translate-y-1">
+              {/* Line 1: Logo on left, Degree + Field on right */}
+              <div className="flex items-start gap-4 mb-3">
+                {edu.logo && (
+                  <Image
+                    src={edu.logo}
+                    alt={`${edu.institution} logo`}
+                    className="w-16 h-16 object-contain rounded-lg border border-blue-400/30 bg-blue-500/10 p-2 flex-shrink-0"
+                    width={64}
+                    height={64}
+                  />
+                )}
+                <div className="flex-1">
+                  <div className="flex items-start justify-between gap-2 mb-1">
+                    <h3 className="text-lg font-bold text-white">
+                      {edu.field}
+                    </h3>
+                    {edu.isCurrentlyEnrolled && (
+                      <span className="px-3 py-1 rounded-full bg-green-500/20 text-green-400 text-xs font-semibold whitespace-nowrap">
+                        Current
+                      </span>
                     )}
                   </div>
-                </motion.div>
-              ))}
+                  {/* Line 2: Institution */}
+                  <p className="text-blue-400 text-sm font-semibold mb-3">
+                    {edu.institution || edu.school || "University"}
+                  </p>
+                </div>
+              </div>
+
+              {/* Line 3: Date */}
+              {edu.startDate && (
+                <div className="flex items-center gap-2 text-gray-400 text-sm mb-3">
+                  <Calendar size={16} />
+                  <span>
+                    {new Date(edu.startDate).getFullYear()} {edu.endDate ? `- ${new Date(edu.endDate).getFullYear()}` : "- Present"}
+                  </span>
+                </div>
+              )}
+
+              {/* Line 4: GPA */}
+              {edu.gpa && (
+                <div className="mb-3">
+                  <span className="px-2.5 py-1 rounded-md text-xs bg-blue-500/10 text-blue-300 border border-blue-500/20">
+                    GPA: {edu.gpa}
+                  </span>
+                </div>
+              )}
+
+              {/* Line 5: Description */}
+              {edu.description && (
+                <p className="text-gray-400 text-sm leading-relaxed mb-3">
+                  {edu.description}
+                </p>
+              )}
+
+              {/* Line 6: Activities */}
+              {edu.activities && edu.activities.length > 0 && (
+                <div className="mb-3 pb-3 border-b border-gray-700/30">
+                  <p className="text-xs font-semibold text-gray-300 mb-2 uppercase tracking-wider">Activities</p>
+                  <div className="flex flex-wrap gap-2">
+                    {edu.activities.map((activity: string, idx: number) => (
+                      <span key={idx} className="px-2.5 py-1 rounded-md text-xs bg-blue-500/15 text-blue-300 border border-blue-500/20 hover:border-blue-500/50 transition-colors">
+                        {activity}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
-          )}
-        </div>
-      </section>
-    </div>
-  );
-}
+          </motion.div>
+        ))}
+      </div>
+    )}
+  </motion.section>
+);
+
+export default EducationSection;

@@ -1,222 +1,252 @@
 "use client";
-
 import { motion } from "framer-motion";
-import { Trophy, Medal, Star, Users, Shield, Music } from "lucide-react";
+import Image from "next/image";
+import { Calendar, ChevronLeft, ChevronRight, Trophy, Award, Medal } from "lucide-react";
+import React from "react";
 
 interface Achievement {
-  id: string;
-  title: string;
-  description: string;
-  year: string;
-  category: "athletics" | "leadership" | "academic" | "other";
-  icon: React.ReactNode;
+  _id?: string;
+  title?: string;
+  name?: string;
+  organization?: string;
+  year?: string;
+  date?: string;
+  imageUrl?: string;
+  description?: string;
 }
 
-const achievements: Achievement[] = [
-  {
-    id: "1",
-    title: "President - SLIIT Athletics",
-    description: "Leading the athletics team and organizing sports events",
-    year: "Present",
-    category: "leadership",
-    icon: <Trophy className="w-5 h-5" />,
-  },
-  {
-    id: "2",
-    title: "SLIIT Colors Men Award",
-    description: "Recognition for outstanding performance in Athletics",
-    year: "2024",
-    category: "athletics",
-    icon: <Medal className="w-5 h-5" />,
-  },
-  {
-    id: "3",
-    title: "Vice President - SLIIT Athletics",
-    description: "Supporting leadership in athletics department",
-    year: "2024",
-    category: "leadership",
-    icon: <Star className="w-5 h-5" />,
-  },
-  {
-    id: "4",
-    title: "Best Performance Award",
-    description: "Sports and Education at School Annual Prize Day",
-    year: "2020",
-    category: "academic",
-    icon: <Trophy className="w-5 h-5" />,
-  },
-  {
-    id: "5",
-    title: "Deputy Head Prefect",
-    description: "Hindu College Colombo",
-    year: "2019-2020",
-    category: "leadership",
-    icon: <Shield className="w-5 h-5" />,
-  },
-  {
-    id: "6",
-    title: "Athletic Captain",
-    description: "Hindu College Colombo - Leading school athletics",
-    year: "2019-2020",
-    category: "athletics",
-    icon: <Medal className="w-5 h-5" />,
-  },
-  {
-    id: "7",
-    title: "2nd Place - 5000m",
-    description: "Zonal & Divisional Meets",
-    year: "2020",
-    category: "athletics",
-    icon: <Medal className="w-5 h-5" />,
-  },
-  {
-    id: "8",
-    title: "3rd Place - 400m Hurdles",
-    description: "Divisional Meet",
-    year: "2020",
-    category: "athletics",
-    icon: <Medal className="w-5 h-5" />,
-  },
-];
+interface SectionHeaderProps {
+  title: string;
+  subtitle: string;
+  codeComment: string;
+}
 
-const extracurricular = [
-  "Provincial Level Athletics",
-  "School Hockey Team",
-  "Western Band Member",
-  "SHOTOKAN RYU KARATE",
-  "Miruthangam - Aradena College of Music",
-];
+interface AchievementsSectionProps {
+  achievements: Achievement[];
+  SectionHeader: React.ComponentType<SectionHeaderProps>;
+}
 
-const categoryColors = {
-  athletics: "bg-primary/20 text-primary border-primary/30",
-  leadership: "bg-amber-500/20 text-amber-400 border-amber-500/30",
-  academic: "bg-emerald-500/20 text-emerald-400 border-emerald-500/30",
-  other: "bg-secondary text-secondary-foreground border-border",
-};
-
-export default function AchievementsPage() {
-  return (
-    <section id="achievements" className="py-24 px-6 relative">
-      <div className="absolute inset-0 -z-10">
-        <div className="absolute bottom-0 left-1/4 w-80 h-80 bg-primary/5 rounded-full blur-3xl" />
+const AchievementsSection: React.FC<AchievementsSectionProps> = ({ achievements, SectionHeader }) => (
+  <motion.section 
+    id="achievements"
+    initial={{ opacity: 0 }}
+    whileInView={{ opacity: 1 }}
+    viewport={{ once: true }}
+    className="scroll-mt-20"
+  >
+    <SectionHeader 
+      title="Achievements & Awards"
+      subtitle="Milestones and recognitions earned along the journey"
+      codeComment="// achievements[]"
+    />
+    
+    {achievements.length === 0 ? (
+      <div className="flex gap-6 overflow-x-auto pb-4">
+        {[1,2,3,4].map((i) => (
+          <div key={i} className="flex-shrink-0 w-80 h-64 rounded-2xl bg-gradient-to-br from-white/5 to-transparent border border-white/10 animate-pulse" />
+        ))}
       </div>
-
-      <div className="container max-w-6xl mx-auto">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          className="space-y-4 mb-16"
+    ) : (
+      <div className="relative group">
+        {/* Left Arrow */}
+        <motion.button
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.9 }}
+          onClick={() => {
+            const container = document.getElementById("achievements-scroll");
+            if (container) {
+              container.scrollBy({
+                left: -420,
+                behavior: "smooth",
+              });
+            }
+          }}
+          className="absolute -left-6 top-1/2 -translate-y-1/2 z-10 p-2 rounded-full bg-white/10 hover:bg-blue-600/50 text-white opacity-0 group-hover:opacity-100 transition-opacity backdrop-blur-sm"
         >
-          <h2 className="text-3xl md:text-4xl font-bold">
-            <span className="text-gradient">Achievements</span> & Activities
-          </h2>
-          <p className="text-muted-foreground max-w-2xl">
-            Recognition and leadership roles that have shaped my journey.
-          </p>
-        </motion.div>
+          <ChevronLeft className="w-6 h-6" />
+        </motion.button>
 
-        {/* Achievements Grid */}
-        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-16">
-          {achievements.map((achievement, index) => (
-            <motion.div
-              key={achievement.id}
-              initial={{ opacity: 0, scale: 0.95 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              viewport={{ once: true }}
-              transition={{ delay: index * 0.05, duration: 0.4 }}
-              className="glass rounded-xl p-5 glass-hover group"
-            >
-              <div className="flex items-start gap-3">
-                <div className={`p-2 rounded-lg border ${categoryColors[achievement.category]}`}>
-                  {achievement.icon}
-                </div>
-                <div className="flex-1 min-w-0">
-                  <span className="text-xs text-muted-foreground">{achievement.year}</span>
-                  <h4 className="font-semibold text-sm mt-1 group-hover:text-primary transition-colors">
-                    {achievement.title}
-                  </h4>
-                  <p className="text-xs text-muted-foreground mt-1 line-clamp-2">
-                    {achievement.description}
-                  </p>
-                </div>
-              </div>
-            </motion.div>
-          ))}
-        </div>
-
-        {/* Extracurricular */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          className="glass rounded-2xl p-8"
+        {/* Scrollable Achievements */}
+        <div
+          id="achievements-scroll"
+          className="flex gap-6 overflow-x-auto pb-4 scroll-smooth"
+          style={{
+            scrollBehavior: "smooth",
+            scrollbarWidth: "thin",
+            scrollbarColor: "rgba(59, 130, 246, 0.3) transparent",
+          }}
         >
-          <div className="flex items-center gap-3 mb-6">
-            <div className="p-2 rounded-lg bg-primary/10">
-              <Music className="w-5 h-5 text-primary" />
-            </div>
-            <h3 className="text-xl font-semibold">Extracurricular Activities</h3>
-          </div>
+          {achievements
+            .sort((a, b) => {
+              const yearA = parseInt(a.year || a.date?.split('-')[0] || '0');
+              const yearB = parseInt(b.year || b.date?.split('-')[0] || '0');
+              return yearB - yearA;
+            })
+            .map((a, i) => {
+            const Icon = i % 3 === 0 ? Trophy : i % 3 === 1 ? Award : Medal;
+            const colorScheme = { border: "border-gray-500/30", bg: "from-blue-500/10", iconBg: "from-blue-500/20 to-cyan-500/20", glow: "from-blue-600/20 to-cyan-600/20", icon: "text-blue-400" };
 
-          <div className="flex flex-wrap gap-3">
-            {extracurricular.map((activity, index) => (
-              <motion.span
-                key={activity}
-                initial={{ opacity: 0, y: 10 }}
-                whileInView={{ opacity: 1, y: 0 }}
+            return (
+              <motion.article
+                key={a._id || a.title}
+                initial={{ opacity: 0, y: 30, scale: 0.9 }}
+                whileInView={{ opacity: 1, y: 0, scale: 1 }}
                 viewport={{ once: true }}
-                transition={{ delay: index * 0.05 }}
-                className="px-4 py-2 bg-secondary rounded-full text-sm text-foreground hover:bg-primary/20 hover:text-primary transition-colors cursor-default"
+                transition={{ 
+                  delay: i * 0.08,
+                  type: "spring",
+                  stiffness: 100,
+                  damping: 15
+                }}
+                whileHover={{ 
+                  y: -12,
+                  scale: 1.02,
+                  rotateY: 5,
+                  transition: { duration: 0.3 }
+                }}
+                className={`flex-shrink-0 w-80 group/card relative rounded-3xl border-2 ${colorScheme.border} bg-gradient-to-br ${colorScheme.bg} to-transparent backdrop-blur-md p-8 overflow-hidden cursor-pointer`}
               >
-                {activity}
-              </motion.span>
-            ))}
-          </div>
-        </motion.div>
 
-        {/* Languages */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          className="mt-8 glass rounded-2xl p-8"
-        >
-          <div className="flex items-center gap-3 mb-6">
-            <div className="p-2 rounded-lg bg-primary/10">
-              <Users className="w-5 h-5 text-primary" />
-            </div>
-            <h3 className="text-xl font-semibold">Languages</h3>
-          </div>
+                {/* Achievement Image */}
+                {a.imageUrl && (
+                  <div className="mb-4 -mx-4 -mt-4">
+                    <Image
+                      src={a.imageUrl}
+                      alt={a.title || "Achievement"}
+                      className="w-full h-80 object-cover rounded-2xl border border-blue-500/10 shadow"
+                      width={320}
+                      height={320}
+                    />
+                  </div>
+                )}
 
-          <div className="grid sm:grid-cols-3 gap-4">
-            {[
-              { lang: "Tamil", level: "Fluent", percentage: 100 },
-              { lang: "English", level: "Professional Proficiency", percentage: 85 },
-              { lang: "Sinhala", level: "Conversational", percentage: 60 },
-            ].map((item) => (
-              <div key={item.lang} className="space-y-2">
-                <div className="flex justify-between text-sm">
-                  <span className="font-medium">{item.lang}</span>
-                  <span className="text-muted-foreground text-xs">{item.level}</span>
-                </div>
-                <div className="h-2 bg-secondary rounded-full overflow-hidden">
-                  <motion.div
+                {/* Animated background glow */}
+                <motion.div 
+                  className={`absolute inset-0 bg-gradient-to-br ${colorScheme.glow} opacity-0 group-hover/card:opacity-100 transition-opacity duration-500`}
+                  animate={{
+                    scale: [1, 1.05, 1],
+                  }}
+                  transition={{
+                    duration: 3,
+                    repeat: Number.POSITIVE_INFINITY,
+                    ease: "easeInOut"
+                  }}
+                />
+                
+                {/* Icon with pulsing effect */}
+                <motion.div 
+                  className="relative mb-6 inline-flex"
+                  whileHover={{ rotate: [0, -10, 10, -10, 0] }}
+                  transition={{ duration: 0.5 }}
+                >
+                  <Icon className={`w-10 h-10 ${colorScheme.icon}`} />
+                  <motion.div 
+                    className={`absolute inset-0 rounded-2xl blur-xl`}
+                    style={{ background: `radial-gradient(circle, ${colorScheme.icon.includes('blue') ? 'rgba(59, 130, 246, 0.3)' : colorScheme.icon.includes('cyan') ? 'rgba(34, 211, 238, 0.3)' : 'rgba(14, 165, 233, 0.3)'})` }}
+                    animate={{
+                      scale: [1, 1.2, 1],
+                      opacity: [0.3, 0.6, 0.3]
+                    }}
+                    transition={{
+                      duration: 2,
+                      repeat: Number.POSITIVE_INFINITY,
+                      ease: "easeInOut"
+                    }}
+                  />
+                </motion.div>
+
+                {/* Content */}
+                <div className="relative z-10">
+                  <h3 className="text-xl font-bold text-white mb-1 group-hover/card:text-blue-300 transition-colors line-clamp-2">
+                    {a.title || a.name || "Achievement"}
+                  </h3>
+                  {/* Organization (if available) */}
+                  {a.organization && (
+                    <div className="text-sm text-blue-200 mb-3 font-medium truncate">
+                      {a.organization}
+                    </div>
+                  )}
+                  
+                  {/* Date badge */}
+                  {(a.year || a.date) && (
+                    <motion.div 
+                      initial={{ opacity: 0, x: -10 }}
+                      whileInView={{ opacity: 1, x: 0 }}
+                      transition={{ delay: i * 0.1 + 0.2 }}
+                      className="flex items-center gap-2 mb-4 px-3 py-1.5 rounded-full bg-gradient-to-r from-blue-500/20 to-cyan-500/20 border border-blue-500/30 w-fit"
+                    >
+                      <Calendar size={14} className="text-blue-400" />
+                      <span className="text-xs font-semibold text-blue-300">{a.year || a.date}</span>
+                    </motion.div>
+                  )}
+                  
+                  {/* Description */}
+                  {a.description && (
+                    <p className="text-gray-300 text-sm leading-relaxed line-clamp-3 mb-4">
+                      {a.description}
+                    </p>
+                  )}
+
+                  {/* Bottom accent line */}
+                  <motion.div 
+                    className="h-1 bg-gradient-to-r from-blue-500 via-cyan-500 to-sky-500 rounded-full mt-6"
                     initial={{ width: 0 }}
-                    whileInView={{ width: `${item.percentage}%` }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 1, delay: 0.3 }}
-                    className="h-full bg-primary rounded-full"
+                    whileInView={{ width: "100%" }}
+                    transition={{ delay: i * 0.1 + 0.3, duration: 0.6 }}
                   />
                 </div>
-              </div>
-            ))}
-          </div>
-        </motion.div>
+                
+                {/* Enhanced floating particles */}
+                <div className="absolute inset-0 overflow-hidden pointer-events-none">
+                  {[...Array(5)].map((_, idx) => (
+                    <motion.div
+                      key={idx}
+                      className="absolute h-1.5 w-1.5 rounded-full bg-blue-400/40"
+                      initial={{ 
+                        x: Math.random() * 100 + '%',
+                        y: '100%',
+                        opacity: 0
+                      }}
+                      animate={{ 
+                        y: '-20%',
+                        opacity: [0, 1, 0],
+                        scale: [0, 1.5, 0]
+                      }}
+                      transition={{
+                        duration: 3,
+                        delay: idx * 0.4,
+                        repeat: Number.POSITIVE_INFINITY,
+                        repeatDelay: 2,
+                        ease: "easeOut"
+                      }}
+                    />
+                  ))}
+                </div>
+              </motion.article>
+            );
+          })}
+        </div>
+
+        {/* Right Arrow */}
+        <motion.button
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.9 }}
+          onClick={() => {
+            const container = document.getElementById("achievements-scroll");
+            if (container) {
+              container.scrollBy({
+                left: 420,
+                behavior: "smooth",
+              });
+            }
+          }}
+          className="absolute -right-6 top-1/2 -translate-y-1/2 z-10 p-2 rounded-full bg-white/10 hover:bg-blue-600/50 text-white opacity-0 group-hover:opacity-100 transition-opacity backdrop-blur-sm"
+        >
+          <ChevronRight className="w-6 h-6" />
+        </motion.button>
       </div>
-    </section>
-  );
-}
+    )}
+  </motion.section>
+);
+
+export default AchievementsSection;
