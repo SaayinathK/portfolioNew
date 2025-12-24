@@ -1,5 +1,5 @@
-import Experience from "@/backend/models/Experience";
-import dbConnect  from "@/backend/lib/db";
+import Experience from "@/models/Experience";
+import dbConnect  from "@/lib/db";
 
 const formatDate = (date?: Date) =>
   date
