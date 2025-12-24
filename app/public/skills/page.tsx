@@ -1,10 +1,9 @@
 "use client";
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Smartphone, Globe, Zap, Code2, Database, Wrench, Shield, Package } from "lucide-react";
 import React from "react";
 
-// You should receive `skills` as a prop or fetch it here.
-// For demo, let's assume it's passed as a prop:
 interface Skill {
   _id?: string;
   name: string;
@@ -14,11 +13,20 @@ interface Skill {
   languageProficiency?: string;
 }
 
-interface SkillsSectionProps {
-  skills: Skill[];
-}
+const SkillsPage: React.FC = () => {
+  const [skills, setSkills] = useState<Skill[]>([]);
+  const [loading, setLoading] = useState(true);
 
-const SkillsSection: React.FC<SkillsSectionProps> = ({ skills }) => {
+  useEffect(() => {
+    fetch("/api/skills")
+      .then((res) => res.json())
+      .then((data) => {
+        setSkills(data || []);
+        setLoading(false);
+      })
+      .catch(() => setLoading(false));
+  }, []);
+
   // Group Technical Skills by subtype
   const technicalSkills = skills.filter((skill) => skill.type === "Technical Skills");
   const groupedTechnicalSkills = technicalSkills.reduce(
@@ -113,11 +121,10 @@ const SkillsSection: React.FC<SkillsSectionProps> = ({ skills }) => {
     <motion.section 
       id="skills"
       initial={{ opacity: 0 }}
-      whileInView={{ opacity: 1 }}
-      viewport={{ once: true }}
+      animate={{ opacity: 1 }}
       className="scroll-mt-20"
     >
-      {skills.length === 0 ? (
+      {loading ? (
         <div className="grid gap-1 md:grid-cols-2 lg:grid-cols-3">
           {[1,2,3,4,5,6].map((i) => (
             <div key={i} className="h-40 rounded-2xl bg-gradient-to-br from-white/5 to-transparent border border-white/10 animate-pulse" />
@@ -327,4 +334,4 @@ const SkillsSection: React.FC<SkillsSectionProps> = ({ skills }) => {
   );
 };
 
-export default SkillsSection;
+export default SkillsPage;

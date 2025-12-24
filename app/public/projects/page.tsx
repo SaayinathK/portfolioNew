@@ -1,4 +1,5 @@
 "use client";
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import Image from "next/image";
 import { Globe, Github, Terminal, ChevronLeft, ChevronRight, Image as ImageIcon } from "lucide-react";
@@ -21,22 +22,37 @@ interface Project {
   type?: string;
 }
 
-interface ProjectsSectionProps {
-  projects: Project[];
-  SectionHeader: React.ComponentType<{
-    title: string;
-    subtitle: string;
-    codeComment: string;
-  }>;
-}
+const SectionHeader: React.FC<{ title: string; subtitle: string; codeComment: string }> = ({
+  title,
+  subtitle,
+  codeComment,
+}) => (
+  <div className="mb-8">
+    <h2 className="text-3xl font-bold text-white">{title}</h2>
+    <p className="text-blue-300">{subtitle}</p>
+    <span className="text-xs text-gray-500">{codeComment}</span>
+  </div>
+);
 
-const ProjectsSection: React.FC<ProjectsSectionProps> = ({ projects, SectionHeader }) => {
+const ProjectsPage: React.FC = () => {
+  const [projects, setProjects] = useState<Project[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetch("/api/projects")
+      .then((res) => res.json())
+      .then((data) => {
+        setProjects(data || []);
+        setLoading(false);
+      })
+      .catch(() => setLoading(false));
+  }, []);
+
   return (
     <motion.section
       id="projects"
       initial={{ opacity: 0 }}
-      whileInView={{ opacity: 1 }}
-      viewport={{ once: true }}
+      animate={{ opacity: 1 }}
       className="scroll-mt-20"
     >
       <SectionHeader
@@ -45,7 +61,7 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({ projects, SectionHead
         codeComment="// projects[]"
       />
 
-      {projects.length === 0 ? (
+      {loading ? (
         <div className="flex gap-6 overflow-x-auto pb-4">
           {[1, 2, 3, 4].map((i) => (
             <div
@@ -219,4 +235,4 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({ projects, SectionHead
   );
 };
 
-export default ProjectsSection;
+export default ProjectsPage;

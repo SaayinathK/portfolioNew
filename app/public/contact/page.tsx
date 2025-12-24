@@ -1,7 +1,8 @@
 "use client";
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Mail, Phone, MapPin, Github, Linkedin, Facebook, Instagram, Send } from "lucide-react";
-import React, { useState } from "react";
+import React from "react";
 
 interface Contact {
   email: string;
@@ -20,12 +21,28 @@ interface SectionHeaderProps {
   codeComment: string;
 }
 
-interface ContactSectionProps {
-  contacts: Contact[];
-  SectionHeader: React.ComponentType<SectionHeaderProps>;
-}
+const SectionHeader: React.FC<SectionHeaderProps> = ({ title, subtitle, codeComment }) => (
+  <div className="mb-8">
+    <h2 className="text-3xl font-bold text-white">{title}</h2>
+    <p className="text-blue-300">{subtitle}</p>
+    <span className="text-xs text-gray-500">{codeComment}</span>
+  </div>
+);
 
-const ContactSection: React.FC<ContactSectionProps> = ({ contacts, SectionHeader }) => {
+const ContactPage: React.FC = () => {
+  const [contacts, setContacts] = useState<Contact[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetch("/api/contacts")
+      .then((res) => res.json())
+      .then((data) => {
+        setContacts(data || []);
+        setLoading(false);
+      })
+      .catch(() => setLoading(false));
+  }, []);
+
   const [copiedField, setCopiedField] = useState<string | null>(null);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -59,23 +76,14 @@ const ContactSection: React.FC<ContactSectionProps> = ({ contacts, SectionHeader
     <motion.section
       id="contact"
       initial={{ opacity: 0 }}
-      whileInView={{ opacity: 1 }}
-      viewport={{ once: true }}
+      animate={{ opacity: 1 }}
       className="scroll-mt-20"
     >
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        transition={{ delay: 0.3, duration: 0.6 }}
-        className="text-center mb-16"
-      >
-        <SectionHeader
-          title="Contact"
-          subtitle="Have a project in mind? Let's collaborate and create something amazing together"
-          codeComment="// contact[]"
-        />
-      </motion.div>
+      <SectionHeader
+        title="Contact"
+        subtitle="Have a project in mind? Let's collaborate and create something amazing together"
+        codeComment="// contact[]"
+      />
 
       <motion.div
         initial={{ opacity: 0, y: 40 }}
@@ -415,4 +423,4 @@ const ContactSection: React.FC<ContactSectionProps> = ({ contacts, SectionHeader
   );
 };
 
-export default ContactSection;
+export default ContactPage;

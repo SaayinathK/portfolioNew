@@ -1,8 +1,9 @@
 "use client";
+import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 import { ChevronLeft, ChevronRight, Eye, X, Image as ImageIcon } from "lucide-react";
-import React, { useState } from "react";
+import React from "react";
 
 interface GalleryItem {
   _id?: string;
@@ -21,22 +22,36 @@ interface SectionHeaderProps {
   codeComment: string;
 }
 
-interface GallerySectionProps {
-  gallery: GalleryItem[];
-  SectionHeader: React.ComponentType<SectionHeaderProps>;
-}
+const SectionHeader: React.FC<SectionHeaderProps> = ({ title, subtitle, codeComment }) => (
+  <div className="mb-8">
+    <h2 className="text-3xl font-bold text-white">{title}</h2>
+    <p className="text-blue-300">{subtitle}</p>
+    <span className="text-xs text-gray-500">{codeComment}</span>
+  </div>
+);
 
-const GallerySection: React.FC<GallerySectionProps> = ({ gallery, SectionHeader }) => {
+const GalleryPage: React.FC = () => {
+  const [gallery, setGallery] = useState<GalleryItem[]>([]);
+  const [loading, setLoading] = useState(true);
   const [isAlbumModalOpen, setIsAlbumModalOpen] = useState(false);
   const [selectedAlbumItem, setSelectedAlbumItem] = useState<GalleryItem | null>(null);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
+  useEffect(() => {
+    fetch("/api/gallery")
+      .then((res) => res.json())
+      .then((data) => {
+        setGallery(data || []);
+        setLoading(false);
+      })
+      .catch(() => setLoading(false));
+  }, []);
 
   return (
     <motion.section
       id="gallery"
       initial={{ opacity: 0 }}
-      whileInView={{ opacity: 1 }}
-      viewport={{ once: true }}
+      animate={{ opacity: 1 }}
       className="scroll-mt-20"
     >
       <SectionHeader
@@ -45,7 +60,7 @@ const GallerySection: React.FC<GallerySectionProps> = ({ gallery, SectionHeader 
         codeComment="// await loadImages();"
       />
 
-      {gallery.length === 0 ? (
+      {loading ? (
         <div className="flex gap-6 overflow-x-auto pb-4">
           {[1, 2, 3, 4, 5, 6].map((i) => (
             <div key={i} className="flex-shrink-0 w-80 h-96 rounded-2xl bg-gradient-to-br from-white/5 to-transparent border border-white/10 animate-pulse" />
@@ -418,4 +433,4 @@ const GallerySection: React.FC<GallerySectionProps> = ({ gallery, SectionHeader 
   );
 };
 
-export default GallerySection;
+export default GalleryPage;
