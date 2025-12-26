@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import GalleryForm, { GalleryFormValues } from "@/components/GalleryForm";
+import Image from "next/image";
 
 interface GalleryItem extends GalleryFormValues {
   _id: string;
@@ -92,11 +93,14 @@ export default function AdminGalleryPage() {
               <div className="h-48 bg-gray-100 flex items-center justify-center text-gray-400 relative">
                 {item.images && item.images.length > 0 ? (
                   <>
-                    <img
+                    <Image
                       src={item.images[0]}
                       alt={item.title}
+                      fill
                       className="object-cover w-full h-full"
+                      unoptimized={item.images[0]?.startsWith("/uploads/")}
                     />
+                    
                     {item.images.length > 1 && (
                       <div className="absolute bottom-2 right-2 bg-black/70 text-white text-xs px-2 py-1 rounded">
                         +{item.images.length - 1} more

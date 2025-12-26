@@ -54,7 +54,7 @@ const ContactSection = dynamic(() => import("./public/contact/page"), { ssr: fal
         direction: Math.random() > 0.5 ? 1 : -1
       }));
       // You can use these icons for animation or other effects
-    }, []);
+    }, [codingIcons.length]);
 
     return (
       <main className="min-h-screen bg-black text-foreground overflow-hidden relative">

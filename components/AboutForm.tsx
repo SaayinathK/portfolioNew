@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Image from "next/image";
 import { Upload, X, Mail, Phone, MapPin, FileText, User } from "lucide-react";
 
 export interface AboutFormValues {
@@ -153,10 +154,13 @@ export default function AboutForm({
         </label>
         {imagePreview ? (
           <div className="relative inline-block">
-            <img
+            <Image
               src={imagePreview}
               alt="Profile preview"
+              width={144}
+              height={144}
               className="h-36 w-36 rounded-xl object-cover ring-2 ring-primary/40"
+              unoptimized={typeof imagePreview === "string" && imagePreview.startsWith("/uploads/")}
             />
             <button
               type="button"

@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import EducationForm, { EducationFormValues } from "@/components/EducationForm";
 import { Trash2, Edit2 } from "lucide-react";
+import Image from "next/image";
 
 interface Education extends Omit<EducationFormValues, 'activities'> {
   _id: string;
@@ -139,11 +140,15 @@ export default function AdminEducationPage() {
                       {/* Line 1: Logo on left, Field and Institution on right */}
                       <div className="flex items-start gap-4 mb-3">
                         {edu.logo && (
-                          <img
+                          <Image
                             src={edu.logo}
                             alt={`${edu.institution} logo`}
+                            width={64}
+                            height={64}
                             className="w-16 h-16 object-contain rounded-lg border border-gray-200 bg-white p-2 flex-shrink-0"
+                            unoptimized={edu.logo.startsWith("/uploads/")}
                           />
+                        
                         )}
                         <div className="flex-1">
                           <div className="flex items-start justify-between gap-2 mb-1">

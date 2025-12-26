@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Image from "next/image";
 
 export interface AchievementFormValues {
   _id?: string;
@@ -120,10 +121,13 @@ export default function AchievementForm({
           className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100"
         />
         {imagePreview && (
-          <img
+          <Image
             src={imagePreview}
             alt="Preview"
+            width={96}
+            height={96}
             className="mt-2 h-24 rounded-lg object-cover border"
+            unoptimized={typeof imagePreview === "string" && imagePreview.startsWith("/uploads/")}
           />
         )}
       </div>

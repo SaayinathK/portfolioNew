@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
@@ -110,7 +111,8 @@ export default function AdminOverview() {
 
   useEffect(() => {
     loadAll();
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  });
 
   const Stat = ({ label, value }: { label: string; value: number | string }) => (
     <div className="rounded-xl bg-white p-5 shadow border border-gray-200">
@@ -217,10 +219,13 @@ export default function AdminOverview() {
                   <div className="space-y-2 text-sm">
                     {about.profileImageUrl && (
                       <div className="flex items-center gap-3 mb-2">
-                        <img
+                        <Image
                           src={about.profileImageUrl}
                           alt={about.title || "Profile image"}
+                          width={64}
+                          height={64}
                           className="w-16 h-16 rounded-full object-cover border border-gray-200"
+                          unoptimized={about.profileImageUrl?.startsWith("/uploads/")}
                         />
                         <div className="min-w-0">
                           <p className="text-sm font-medium text-gray-900 line-clamp-1">
@@ -284,7 +289,14 @@ export default function AdminOverview() {
                   {projects.slice(0, 4).map((p) => (
                     <div key={p._id} className="rounded-xl border border-gray-200 p-4 flex gap-4">
                       {p.imageUrl && (
-                        <img src={p.imageUrl} alt={p.title} className="w-20 h-20 object-cover rounded-lg border border-gray-100" />
+                        <Image
+                          src={p.imageUrl}
+                          alt={p.title}
+                          width={80}
+                          height={80}
+                          className="w-20 h-20 object-cover rounded-lg border border-gray-100"
+                          unoptimized={p.imageUrl?.startsWith("/uploads/")}
+                        />
                       )}
                       <div className="flex-1 min-w-0">
                         <h4 className="font-semibold text-gray-900">{p.title}</h4>
@@ -320,7 +332,14 @@ export default function AdminOverview() {
                   {achievements.slice(0, 6).map((a) => (
                     <li key={a._id} className="flex items-center gap-3 rounded-lg border border-gray-200 p-3">
                       {a.imageUrl && (
-                        <img src={a.imageUrl} alt={a.title} className="w-12 h-12 object-cover rounded-md border border-gray-100" />
+                        <Image
+                          src={a.imageUrl}
+                          alt={a.title}
+                          width={48}
+                          height={48}
+                          className="w-12 h-12 object-cover rounded-md border border-gray-100"
+                          unoptimized={a.imageUrl?.startsWith("/uploads/")}
+                        />
                       )}
                       <div className="flex-1 min-w-0">
                         <span className="text-sm text-gray-800 font-semibold">{a.title || a.name}</span>
@@ -346,7 +365,14 @@ export default function AdminOverview() {
                   {education.slice(0, 4).map((e) => (
                     <li key={e._id} className="flex items-center gap-3 rounded-lg border border-gray-200 p-3">
                       {e.logo && (
-                        <img src={e.logo} alt={e.institution} className="w-10 h-10 object-cover rounded-full border border-gray-100" />
+                        <Image
+                          src={e.logo}
+                          alt={e.institution}
+                          width={40}
+                          height={40}
+                          className="w-10 h-10 object-cover rounded-full border border-gray-100"
+                          unoptimized={e.logo?.startsWith("/uploads/")}
+                        />
                       )}
                       <div className="flex-1 min-w-0">
                         <span className="font-medium text-gray-900">{e.institution}</span>
@@ -373,7 +399,14 @@ export default function AdminOverview() {
                   {experience.slice(0, 4).map((x) => (
                     <li key={x._id} className="flex items-center gap-3 rounded-lg border border-gray-200 p-3">
                       {x.logo && (
-                        <img src={x.logo} alt={x.company} className="w-10 h-10 object-cover rounded-full border border-gray-100" />
+                        <Image
+                          src={x.logo}
+                          alt={x.company}
+                          width={40}
+                          height={40}
+                          className="w-10 h-10 object-cover rounded-full border border-gray-100"
+                          unoptimized={x.logo?.startsWith("/uploads/")}
+                        />
                       )}
                       <div className="flex-1 min-w-0">
                         <span className="font-medium text-gray-900">{x.title || x.role}</span>
@@ -399,7 +432,7 @@ export default function AdminOverview() {
                     const src = g.image || g.imageUrl || g.url || g.src;
                     return (
                       <div key={g._id || src} className="aspect-video rounded-lg overflow-hidden border border-gray-200 bg-gray-100">
-                        {src ? <img src={src} alt={g.title || g.caption || "Gallery"} className="w-full h-full object-cover" /> : null}
+                        {src ? <Image src={src} alt={g.title || g.caption || "Gallery"} fill className="w-full h-full object-cover" unoptimized={src?.startsWith("/uploads/")} /> : null}
                         <div className="text-xs text-gray-700 p-1 truncate">{g.title || g.caption}</div>
                       </div>
                     );

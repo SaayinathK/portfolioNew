@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Image from "next/image";
 import AchievementForm, { AchievementFormValues } from "@/components/AchievementForm";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -153,7 +154,6 @@ export default function AdminAchievementsPage() {
         : []
     )
   );
-  
   // Filter achievements
   const filteredAchievements = Array.isArray(achievements)
     ? achievements.filter(achievement => {
@@ -375,10 +375,14 @@ export default function AdminAchievementsPage() {
                       {/* Achievement Image */}
                       {achievement.imageUrl && (
                         <div className="mb-4">
-                          <img
+                          <Image
                             src={achievement.imageUrl}
                             alt={achievement.title}
+                            width={600}
+                            height={192}
                             className="w-full max-h-48 object-cover rounded-xl border border-gray-200 shadow-sm"
+                            style={{ objectFit: "cover" }}
+                            unoptimized={false}
                           />
                         </div>
                       )}

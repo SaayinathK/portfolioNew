@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, ReactNode } from "react";
+import Image from "next/image";
 import { X, Upload, Star } from "lucide-react";
 
 export interface GalleryFormValues {
@@ -161,10 +162,13 @@ export default function GalleryForm({
           <div className="grid grid-cols-2 gap-3 mb-4">
             {imagePreviews.map((img, index) => (
               <div key={index} className="relative group">
-                <img
+                <Image
                   src={img}
                   alt={`Preview ${index + 1}`}
+                  width={320}
+                  height={128}
                   className="w-full h-32 object-cover rounded-lg border-2 border-gray-300"
+                  unoptimized={typeof img === "string" && img.startsWith("/uploads/")}
                 />
                 {index === 0 ? (
                   <div className="absolute top-2 left-2 bg-indigo-600 text-white text-xs px-2 py-1 rounded">

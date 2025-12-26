@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import ExperienceForm, { ExperienceFormValues } from "@/components/ExperienceForm";
 import { Trash2, Edit2, Plus, Briefcase, Calendar, MapPin, Award, Loader2 } from "lucide-react";
+import Image from "next/image";
 
 interface Experience extends Omit<ExperienceFormValues, "achievements"> {
   _id: string;
@@ -170,11 +171,15 @@ export default function AdminExperiencePage() {
                           <div className="flex-1">
                             <div className="flex flex-wrap items-center gap-3 mb-2">
                               {exp.logo && (
-                                <img
+                                <Image
                                   src={exp.logo}
                                   alt={`${exp.company} logo`}
+                                  width={40}
+                                  height={40}
                                   className="w-10 h-10 object-contain rounded-lg border border-gray-200 bg-white p-1 shadow-sm"
+                                  unoptimized={exp.logo.startsWith("/uploads/")}
                                 />
+                              
                               )}
                               <div className="flex flex-wrap items-center gap-2">
                                 <h3 className="text-lg font-bold text-gray-800 group-hover:text-blue-700 transition-colors">

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Image from "next/image";
 import { X } from "lucide-react";
 
 export interface EducationFormValues {
@@ -147,10 +148,13 @@ export default function EducationForm({
         <div className="space-y-3">
           {logoPreview && (
             <div className="relative inline-block">
-              <img
+              <Image
                 src={logoPreview}
                 alt="Logo preview"
+                width={128}
+                height={128}
                 className="h-32 w-32 object-contain rounded-lg border-2 border-gray-300 p-2 bg-gray-50"
+                unoptimized={typeof logoPreview === "string" && logoPreview.startsWith("/uploads/")}
               />
               <button
                 type="button"
