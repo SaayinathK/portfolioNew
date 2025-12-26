@@ -566,7 +566,7 @@ import { SpeedInsights } from "@vercel/speed-insights/next"
                             const highlightSkills = (about?.highlights || [])
                               .filter((h) => h && h.trim())
                               .map((title, index) => ({
-                                icon: React.cloneElement(palette.icons[index % palette.icons.length], { key: `icon-${index}` }),
+                                icon: palette.icons[index % palette.icons.length],
                                 title: title.trim(),
                                 color: palette.colors[index % palette.colors.length],
                                 emoji: palette.emojis[index % palette.emojis.length],
