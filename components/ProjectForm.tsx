@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Image from "next/image";
 import { Upload, X, Image as ImageIcon } from "lucide-react";
 
 export interface ProjectFormValues {
@@ -193,10 +194,13 @@ export default function ProjectForm({
 
         {imagePreview ? (
           <div className="relative group">
-            <img
+            <Image
               src={imagePreview}
               alt="Preview"
+              width={640}
+              height={192}
               className="w-full h-48 object-cover rounded-lg border border-gray-300"
+              unoptimized={typeof imagePreview === "string" && imagePreview.startsWith("/uploads/")}
             />
             <button
               type="button"

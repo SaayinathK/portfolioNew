@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Image from "next/image";
 import AboutForm, { AboutFormValues } from "@/components/AboutForm";
 import { AlertCircle, CheckCircle2 } from "lucide-react";
 
@@ -169,10 +170,13 @@ export default function AdminAboutPage() {
             {about ? (
               <div className="space-y-4">
                 {about.profileImageUrl && (
-                  <img
+                  <Image
                     src={about.profileImageUrl}
                     alt="Profile"
+                    width={400}
+                    height={400}
                     className="w-full rounded-xl object-cover shadow-sm"
+                    unoptimized={typeof about.profileImageUrl === "string" && about.profileImageUrl.startsWith("/uploads/")}
                   />
                 )}
 

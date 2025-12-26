@@ -1,25 +1,25 @@
 import mongoose from "mongoose";
 
-const MONGODB_URI = process.env.MONGODB_URI as string;
+const MONGODB_URI = process.env.MONGODB_URI;
 
 if (!MONGODB_URI) {
-  throw new Error("Please define the MONGODB_URI environment variable");
+  throw new Error("MONGODB_URI is not defined");
 }
 
-interface Cached {
+interface MongooseCache {
   conn: typeof mongoose | null;
   promise: Promise<typeof mongoose> | null;
 }
 
 // @ts-ignore
-let cached: Cached = global.mongoose;
+let cached: MongooseCache = global.mongoose;
 
 if (!cached) {
   // @ts-ignore
   cached = global.mongoose = { conn: null, promise: null };
 }
 
-const dbConnect = async () => {
+export default async function dbConnect() {
   if (cached.conn) {
     return cached.conn;
   }
@@ -33,8 +33,5 @@ const dbConnect = async () => {
   }
 
   cached.conn = await cached.promise;
-  console.log("✅ MongoDB connected");
   return cached.conn;
-};
-
-export default dbConnect;
+}
