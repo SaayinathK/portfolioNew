@@ -7,12 +7,15 @@ export async function GET() {
   try {
     await dbConnect();
     const items = await Contact.find().sort({ createdAt: -1 }).lean();
-    // Ensure we always return an array
-    return NextResponse.json(Array.isArray(items) ? items : []);
+    if (!Array.isArray(items)) {
+      console.error("Contact.find() did not return an array", items);
+      return NextResponse.json([]);
+    }
+    return NextResponse.json(items);
   } catch (error) {
     console.error("GET /api/contact error:", error);
     return NextResponse.json(
-      { error: "Failed to fetch contacts" },
+      { error: error instanceof Error ? error.message : "Failed to fetch contacts" },
       { status: 500 }
     );
   }
