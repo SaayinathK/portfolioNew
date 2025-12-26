@@ -90,17 +90,16 @@ export default function AdminSkillsPage() {
     ...(Array.isArray(skills) ? skills.map((s) => s.subtype).filter(Boolean) : []),
   ]));
 
-  const filteredSkills = skills.filter((skill) => {
-    const filteredSkills = Array.isArray(skills)
-      ? skills.filter((skill) => {
-          const matchesSearch =
-            skill.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            (skill.description && skill.description.toLowerCase().includes(searchTerm.toLowerCase())) ||
-            (skill.type && skill.type.toLowerCase().includes(searchTerm.toLowerCase()));
-          const matchesCategory = selectedCategory ? skill.subtype === selectedCategory || skill.type === selectedCategory : true;
-          return matchesSearch && matchesCategory;
-        })
-      : [];
+  const filteredSkills = Array.isArray(skills)
+    ? skills.filter((skill) => {
+        const matchesSearch =
+          skill.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          (skill.description && skill.description.toLowerCase().includes(searchTerm.toLowerCase())) ||
+          (skill.type && skill.type.toLowerCase().includes(searchTerm.toLowerCase()));
+        const matchesCategory = selectedCategory ? skill.subtype === selectedCategory || skill.type === selectedCategory : true;
+        return matchesSearch && matchesCategory;
+      })
+    : [];
 
   const categoryIcons: Record<string, React.ReactNode> = {
     "Mobile Development": <Smartphone className="h-4 w-4 text-indigo-600" />,
@@ -112,7 +111,7 @@ export default function AdminSkillsPage() {
     "Languages Spoken": <Globe className="h-4 w-4 text-purple-600" />,
   };
 
-  const totalSkills = skills.length;
+
   const totalSkills = Array.isArray(skills) ? skills.length : 0;
   const expertSkills = Array.isArray(skills) ? skills.filter((s) => s.level === "Expert").length : 0;
   const intermediateSkills = Array.isArray(skills) ? skills.filter((s) => s.level === "Intermediate").length : 0;
