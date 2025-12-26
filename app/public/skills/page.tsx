@@ -39,21 +39,10 @@ const SkillsPage: React.FC = () => {
     {} as Record<string, Skill[]>
   );
   
-  const TypingLabel = ({ text }: { text: string }) => {
+const TypingLabel = ({ text }: { text: string }) => {
   return (
-    <motion.span
-      initial={{ opacity: 0 }}
-      useEffect(() => {
-        fetch("/api/skills")
-          .then((res) => res.json())
-          .then((data) => {
-            setSkills(Array.isArray(data) ? data : []);
-            setLoading(false);
-          })
-          .catch(() => setLoading(false));
-      }, []);
-        _
-      </motion.span>
+    <motion.span initial={{ opacity: 0 }}>
+      {text}
     </motion.span>
   );
 };
