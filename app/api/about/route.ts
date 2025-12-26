@@ -2,46 +2,50 @@ import { NextResponse } from 'next/server';
 import dbConnect from '@/lib/db';
 import About from '@/models/About';
 
-// GET: Fetch about information
+/* GET */
 export async function GET() {
   try {
     await dbConnect();
+
     const about = await About.findOne({}).lean();
-    if (!about) {
-      return NextResponse.json({ error: 'About information not found' }, { status: 404 });
-    }
-    return NextResponse.json(about);
+
+    // ✅ ALWAYS RETURN CONSISTENT SHAPE
+    return NextResponse.json(about ?? null);
   } catch (error) {
-    console.error('GET about error:', error);
-    return NextResponse.json({ error: 'Failed to fetch about information' }, { status: 500 });
+    console.error('GET /api/about error:', error);
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 }
+    );
   }
 }
 
-// POST: Create about information (only one document allowed)
+/* POST */
 export async function POST(req: Request) {
   try {
     await dbConnect();
     const body = await req.json();
 
-    // Check if about already exists
-    const existing = await About.findOne({});
-    if (existing) {
+    const exists = await About.findOne({});
+    if (exists) {
       return NextResponse.json(
-        { error: 'About information already exists. Use PUT to update.' },
+        { error: 'About already exists' },
         { status: 400 }
       );
     }
 
-    const about = new About(body);
-    await about.save();
+    const about = await About.create(body);
     return NextResponse.json(about, { status: 201 });
   } catch (error) {
-    console.error('POST about error:', error);
-    return NextResponse.json({ error: 'Failed to create about information' }, { status: 500 });
+    console.error('POST /api/about error:', error);
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 }
+    );
   }
 }
 
-// PUT: Update about information
+/* PUT */
 export async function PUT(req: Request) {
   try {
     await dbConnect();
@@ -49,37 +53,39 @@ export async function PUT(req: Request) {
 
     const about = await About.findOneAndUpdate(
       {},
-      {
-        ...body,
-        updatedAt: new Date(),
-      },
+      body,
       { new: true, upsert: true }
-    ).lean();
+    );
 
     return NextResponse.json(about);
   } catch (error) {
-    console.error('PUT about error:', error);
-    return NextResponse.json({ error: 'Failed to update about information' }, { status: 500 });
+    console.error('PUT /api/about error:', error);
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 }
+    );
   }
 }
 
-// DELETE: Delete about information
-export async function DELETE(req: Request) {
+/* DELETE */
+export async function DELETE() {
   try {
     await dbConnect();
 
-    const result = await About.findOneAndDelete({}).lean();
-    
-    if (!result) {
+    const deleted = await About.findOneAndDelete({});
+    if (!deleted) {
       return NextResponse.json(
-        { message: 'About content not found' },
+        { message: 'No about content found' },
         { status: 404 }
       );
     }
-    
+
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error('DELETE about error:', error);
-    return NextResponse.json({ error: 'Failed to delete about information' }, { status: 500 });
+    console.error('DELETE /api/about error:', error);
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 }
+    );
   }
 }
