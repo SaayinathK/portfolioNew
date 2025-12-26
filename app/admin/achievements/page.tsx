@@ -146,26 +146,36 @@ export default function AdminAchievementsPage() {
   };
 
   // Get all unique categories
-  const categories = Array.from(new Set(achievements.map(a => a.category).filter(Boolean)));
+  const categories = Array.from(
+    new Set(
+      Array.isArray(achievements)
+        ? achievements.map(a => a.category).filter(Boolean)
+        : []
+    )
+  );
   
   // Filter achievements
-  const filteredAchievements = achievements.filter(achievement => {
-    const matchesSearch = 
-      achievement.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (achievement.organization && achievement.organization.toLowerCase().includes(searchTerm.toLowerCase())) ||
-      (achievement.description && achievement.description.toLowerCase().includes(searchTerm.toLowerCase()));
-    const matchesCategory = selectedCategory ? achievement.category === selectedCategory : true;
-    return matchesSearch && matchesCategory;
-  });
+  const filteredAchievements = Array.isArray(achievements)
+    ? achievements.filter(achievement => {
+        const matchesSearch = 
+          achievement.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          (achievement.organization && achievement.organization.toLowerCase().includes(searchTerm.toLowerCase())) ||
+          (achievement.description && achievement.description.toLowerCase().includes(searchTerm.toLowerCase()));
+        const matchesCategory = selectedCategory ? achievement.category === selectedCategory : true;
+        return matchesSearch && matchesCategory;
+      })
+    : [];
 
   // Stats
-  const totalAchievements = achievements.length;
-  const recentAchievements = achievements.filter(a => {
-    if (!a.year) return false;
-    const currentYear = new Date().getFullYear();
-    const achievementYear = parseInt(a.year);
-    return currentYear - achievementYear <= 1;
-  }).length;
+  const totalAchievements = Array.isArray(achievements) ? achievements.length : 0;
+  const recentAchievements = Array.isArray(achievements)
+    ? achievements.filter(a => {
+        if (!a.year) return false;
+        const currentYear = new Date().getFullYear();
+        const achievementYear = parseInt(a.year);
+        return currentYear - achievementYear <= 1;
+      }).length
+    : 0;
 
   return (
     <div className="space-y-8">

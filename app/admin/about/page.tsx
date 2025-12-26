@@ -207,8 +207,10 @@ export default function AdminAboutPage() {
                     <p className="text-xs text-gray-400 mb-2">HIGHLIGHTS</p>
                     <ul className="text-gray-600 space-y-1 list-disc list-inside">
                       {(Array.isArray(about.highlights)
-                        ? about.highlights
-                        : about.highlights.split("\n")
+                        ? about.highlights.filter(Boolean)
+                        : typeof about.highlights === "string"
+                          ? about.highlights.split("\n").filter(Boolean)
+                          : []
                       ).map((h: string, i: number) => (
                         <li key={i}>{h}</li>
                       ))}

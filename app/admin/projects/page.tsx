@@ -94,15 +94,17 @@ export default function AdminProjectsPage() {
 
   const allTags = Array.from(new Set(projects.flatMap(p => p.tags)));
 
-  const filteredProjects = projects.filter(project => {
-    const matchesSearch = 
-      project.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      project.description.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesTag = selectedTag ? project.tags.includes(selectedTag) : true;
-    return matchesSearch && matchesTag;
-  });
+  const filteredProjects = Array.isArray(projects)
+    ? projects.filter(project => {
+        const matchesSearch = 
+          project.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          project.description.toLowerCase().includes(searchTerm.toLowerCase());
+        const matchesTag = selectedTag ? project.tags.includes(selectedTag) : true;
+        return matchesSearch && matchesTag;
+      })
+    : [];
 
-  const activeProjects = projects.filter(p => p.liveLink).length;
+  const activeProjects = Array.isArray(projects) ? projects.filter(p => p.liveLink).length : 0;
   const totalTags = allTags.length;
 
   return (

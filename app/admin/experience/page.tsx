@@ -156,7 +156,7 @@ export default function AdminExperiencePage() {
                 </div>
               ) : (
                 <div className="space-y-6">
-                  {items.map((exp) => (
+                  {Array.isArray(items) && items.map((exp) => (
                     <div
                       key={exp._id}
                       className="group relative rounded-xl border border-gray-200 bg-white p-6 hover:shadow-2xl transition-all duration-300 hover:border-blue-200 overflow-hidden"

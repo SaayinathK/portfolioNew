@@ -86,18 +86,21 @@ export default function AdminSkillsPage() {
   };
 
   const categories = Array.from(new Set([
-    ...skills.map((s) => s.type).filter(Boolean),
-    ...skills.map((s) => s.subtype).filter(Boolean),
+    ...(Array.isArray(skills) ? skills.map((s) => s.type).filter(Boolean) : []),
+    ...(Array.isArray(skills) ? skills.map((s) => s.subtype).filter(Boolean) : []),
   ]));
 
   const filteredSkills = skills.filter((skill) => {
-    const matchesSearch =
-      skill.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (skill.description && skill.description.toLowerCase().includes(searchTerm.toLowerCase())) ||
-      (skill.type && skill.type.toLowerCase().includes(searchTerm.toLowerCase()));
-    const matchesCategory = selectedCategory ? skill.subtype === selectedCategory || skill.type === selectedCategory : true;
-    return matchesSearch && matchesCategory;
-  });
+    const filteredSkills = Array.isArray(skills)
+      ? skills.filter((skill) => {
+          const matchesSearch =
+            skill.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            (skill.description && skill.description.toLowerCase().includes(searchTerm.toLowerCase())) ||
+            (skill.type && skill.type.toLowerCase().includes(searchTerm.toLowerCase()));
+          const matchesCategory = selectedCategory ? skill.subtype === selectedCategory || skill.type === selectedCategory : true;
+          return matchesSearch && matchesCategory;
+        })
+      : [];
 
   const categoryIcons: Record<string, React.ReactNode> = {
     "Mobile Development": <Smartphone className="h-4 w-4 text-indigo-600" />,
@@ -110,8 +113,9 @@ export default function AdminSkillsPage() {
   };
 
   const totalSkills = skills.length;
-  const expertSkills = skills.filter((s) => s.level === "Expert").length;
-  const intermediateSkills = skills.filter((s) => s.level === "Intermediate").length;
+  const totalSkills = Array.isArray(skills) ? skills.length : 0;
+  const expertSkills = Array.isArray(skills) ? skills.filter((s) => s.level === "Expert").length : 0;
+  const intermediateSkills = Array.isArray(skills) ? skills.filter((s) => s.level === "Intermediate").length : 0;
 
   return (
     <div className="space-y-10 text-gray-900">

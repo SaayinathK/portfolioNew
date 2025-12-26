@@ -101,7 +101,7 @@ export default function AdminContactPage() {
           </div>
         ) : (
           <div className="grid grid-cols-1 gap-4">
-            {items.map((contact) => (
+            {Array.isArray(items) && items.map((contact) => (
               <div
                 key={contact._id}
                 className="border border-gray-200 rounded-lg bg-white p-6 shadow hover:shadow-lg transition"

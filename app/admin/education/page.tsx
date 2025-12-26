@@ -129,84 +129,86 @@ export default function AdminEducationPage() {
               </p>
             </div>
           ) : (
-            educations.map((edu) => (
-              <div
-                key={edu._id}
-                className="flex flex-col md:flex-row items-start justify-between rounded-xl border p-6 bg-gradient-to-br from-white to-gray-50 hover:shadow-lg transition-shadow"
-              >
-                <div className="flex-1 space-y-2">
-                  {/* Line 1: Logo on left, Field and Institution on right */}
-                  <div className="flex items-start gap-4 mb-3">
-                    {edu.logo && (
-                      <img
-                        src={edu.logo}
-                        alt={`${edu.institution} logo`}
-                        className="w-16 h-16 object-contain rounded-lg border border-gray-200 bg-white p-2 flex-shrink-0"
-                      />
-                    )}
-                    <div className="flex-1">
-                      <div className="flex items-start justify-between gap-2 mb-1">
-                        <h3 className="font-bold text-gray-900 text-lg">{edu.field}</h3>
-                        {edu.isCurrentlyEnrolled && (
-                          <span className="text-xs px-3 py-1 rounded-full bg-green-100 text-green-800 font-medium whitespace-nowrap">
-                            Current
-                          </span>
+            Array.isArray(educations)
+              ? educations.map((edu) => (
+                  <div
+                    key={edu._id}
+                    className="flex flex-col md:flex-row items-start justify-between rounded-xl border p-6 bg-gradient-to-br from-white to-gray-50 hover:shadow-lg transition-shadow"
+                  >
+                    <div className="flex-1 space-y-2">
+                      {/* Line 1: Logo on left, Field and Institution on right */}
+                      <div className="flex items-start gap-4 mb-3">
+                        {edu.logo && (
+                          <img
+                            src={edu.logo}
+                            alt={`${edu.institution} logo`}
+                            className="w-16 h-16 object-contain rounded-lg border border-gray-200 bg-white p-2 flex-shrink-0"
+                          />
                         )}
+                        <div className="flex-1">
+                          <div className="flex items-start justify-between gap-2 mb-1">
+                            <h3 className="font-bold text-gray-900 text-lg">{edu.field}</h3>
+                            {edu.isCurrentlyEnrolled && (
+                              <span className="text-xs px-3 py-1 rounded-full bg-green-100 text-green-800 font-medium whitespace-nowrap">
+                                Current
+                              </span>
+                            )}
+                          </div>
+                          <p className="text-gray-600 text-sm font-medium">{edu.institution}</p>
+                        </div>
                       </div>
-                      <p className="text-gray-600 text-sm font-medium">{edu.institution}</p>
+
+                      {/* Line 3: Date */}
+                      <div className="text-sm text-gray-500">
+                        <p>
+                          {formatDate(edu.startDate)} -{" "}
+                          {edu.isCurrentlyEnrolled ? "Present" : formatDate(edu.endDate) || "N/A"}
+                        </p>
+                      </div>
+
+                      {/* Line 4: GPA */}
+                      {edu.gpa && (
+                        <p className="text-sm text-indigo-600 font-medium">GPA: {edu.gpa}</p>
+                      )}
+
+                      {/* Line 5: Description */}
+                      {edu.description && (
+                        <p className="text-sm text-gray-700 mt-2 leading-relaxed">{edu.description}</p>
+                      )}
+
+                      {/* Line 6: Activities */}
+                      {edu.activities && edu.activities.length > 0 && (
+                        <div className="mt-3 text-sm">
+                          <p className="text-gray-800 font-semibold mb-1">Activities:</p>
+                          <ul className="text-gray-600 space-y-1 list-disc list-inside">
+                            {edu.activities.map((activity: string, i: number) => (
+                              <li key={i} className="text-sm">{activity}</li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="flex flex-row md:flex-col gap-2 mt-4 md:mt-0 md:ml-6">
+                      <button
+                        onClick={() => setEditing(edu)}
+                        className="flex items-center gap-1 px-4 py-1 border rounded-lg text-blue-600 hover:bg-blue-50 transition-colors text-sm font-medium"
+                      >
+                        <Edit2 className="w-4 h-4" />
+                        Edit
+                      </button>
+                      <button
+                        onClick={() => handleDelete(edu._id)}
+                        className="flex items-center gap-1 px-4 py-1 border rounded-lg text-red-600 hover:bg-red-50 transition-colors text-sm font-medium disabled:opacity-60"
+                        disabled={deletingId === edu._id}
+                      >
+                        <Trash2 className="w-4 h-4" />
+                        {deletingId === edu._id ? "Deleting..." : "Delete"}
+                      </button>
                     </div>
                   </div>
-
-                  {/* Line 3: Date */}
-                  <div className="text-sm text-gray-500">
-                    <p>
-                      {formatDate(edu.startDate)} -{" "}
-                      {edu.isCurrentlyEnrolled ? "Present" : formatDate(edu.endDate) || "N/A"}
-                    </p>
-                  </div>
-
-                  {/* Line 4: GPA */}
-                  {edu.gpa && (
-                    <p className="text-sm text-indigo-600 font-medium">GPA: {edu.gpa}</p>
-                  )}
-
-                  {/* Line 5: Description */}
-                  {edu.description && (
-                    <p className="text-sm text-gray-700 mt-2 leading-relaxed">{edu.description}</p>
-                  )}
-
-                  {/* Line 6: Activities */}
-                  {edu.activities && edu.activities.length > 0 && (
-                    <div className="mt-3 text-sm">
-                      <p className="text-gray-800 font-semibold mb-1">Activities:</p>
-                      <ul className="text-gray-600 space-y-1 list-disc list-inside">
-                        {edu.activities.map((activity: string, i: number) => (
-                          <li key={i} className="text-sm">{activity}</li>
-                        ))}
-                      </ul>
-                    </div>
-                  )}
-                </div>
-
-                <div className="flex flex-row md:flex-col gap-2 mt-4 md:mt-0 md:ml-6">
-                  <button
-                    onClick={() => setEditing(edu)}
-                    className="flex items-center gap-1 px-4 py-1 border rounded-lg text-blue-600 hover:bg-blue-50 transition-colors text-sm font-medium"
-                  >
-                    <Edit2 className="w-4 h-4" />
-                    Edit
-                  </button>
-                  <button
-                    onClick={() => handleDelete(edu._id)}
-                    className="flex items-center gap-1 px-4 py-1 border rounded-lg text-red-600 hover:bg-red-50 transition-colors text-sm font-medium disabled:opacity-60"
-                    disabled={deletingId === edu._id}
-                  >
-                    <Trash2 className="w-4 h-4" />
-                    {deletingId === edu._id ? "Deleting..." : "Delete"}
-                  </button>
-                </div>
-              </div>
-            ))
+                ))
+              : null
           )}
         </div>
       </div>

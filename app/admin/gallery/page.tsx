@@ -84,7 +84,7 @@ export default function AdminGalleryPage() {
 
         {/* Gallery Items */}
         <div className="lg:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-6">
-          {items.map((item) => (
+          {Array.isArray(items) && items.map((item) => (
             <div
               key={item._id}
               className="rounded-xl border border-gray-200 overflow-hidden bg-white shadow hover:shadow-lg transition flex flex-col"
@@ -137,7 +137,7 @@ export default function AdminGalleryPage() {
               </div>
             </div>
           ))}
-          {items.length === 0 && (
+          {(!Array.isArray(items) || items.length === 0) && (
             <p className="text-sm text-gray-500 col-span-full text-center mt-4">
               No photos yet. Use the form to add one.
             </p>
