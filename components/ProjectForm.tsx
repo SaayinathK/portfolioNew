@@ -87,8 +87,7 @@ export default function ProjectForm({
       const formData = new FormData();
       formData.append("file", file);
 
-
-      // Use the correct upload endpoint with action=upload
+      // Use the correct upload endpoint matching the backend
       const response = await fetch("/api/projects?action=upload", {
         method: "POST",
         body: formData,
