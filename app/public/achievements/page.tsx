@@ -54,7 +54,7 @@ const AchievementsPage: React.FC = () => {
       id="achievements"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      className="scroll-mt-20"
+      className="scroll-mt-20 px-2 sm:px-0"
     >
       <SectionHeader 
         title=""
@@ -63,9 +63,9 @@ const AchievementsPage: React.FC = () => {
       />
       
       {loading ? (
-        <div className="flex gap-6 overflow-x-auto pb-4">
+        <div className="flex gap-4 sm:gap-6 overflow-x-auto pb-3 sm:pb-4">
           {[1,2,3,4].map((i) => (
-            <div key={i} className="flex-shrink-0 w-80 h-64 rounded-2xl bg-gradient-to-br from-white/5 to-transparent border border-white/10 animate-pulse" />
+            <div key={i} className="flex-shrink-0 w-56 sm:w-80 h-36 sm:h-64 rounded-2xl bg-gradient-to-br from-white/5 to-transparent border border-white/10 animate-pulse" />
           ))}
         </div>
       ) : (
@@ -91,7 +91,7 @@ const AchievementsPage: React.FC = () => {
           {/* Scrollable Achievements */}
           <div
             id="achievements-scroll"
-            className="flex gap-6 overflow-x-auto pb-4 scroll-smooth no-scrollbar"
+            className="flex gap-4 sm:gap-6 overflow-x-auto pb-3 sm:pb-4 scroll-smooth no-scrollbar"
             style={{
               scrollBehavior: "smooth",
               scrollbarWidth: "none",
@@ -127,18 +127,18 @@ const AchievementsPage: React.FC = () => {
                     rotateY: 5,
                     transition: { duration: 0.3 }
                   }}
-                  className={`flex-shrink-0 w-80 group/card relative rounded-3xl border-2 ${colorScheme.border} bg-gradient-to-br ${colorScheme.bg} to-transparent backdrop-blur-md p-8 overflow-hidden cursor-pointer`}
+                  className={`flex-shrink-0 w-56 sm:w-80 group/card relative rounded-3xl border-2 ${colorScheme.border} bg-gradient-to-br ${colorScheme.bg} to-transparent backdrop-blur-md p-4 sm:p-8 overflow-hidden cursor-pointer`}
                 >
 
                   {/* Achievement Image */}
                   {a.imageUrl && (
-                    <div className="mb-4 -mx-4 -mt-4">
+                    <div className="mb-3 sm:mb-4 -mx-2 sm:-mx-4 -mt-2 sm:-mt-4">
                       <Image
                         src={a.imageUrl}
                         alt={a.title || "Achievement"}
-                        className="w-full h-80 object-cover rounded-2xl border border-blue-500/10 shadow"
-                        width={320}
-                        height={320}
+                        className="w-full h-36 sm:h-80 object-cover rounded-2xl border border-blue-500/10 shadow"
+                        width={144}
+                        height={144}
                       />
                     </div>
                   )}
@@ -176,14 +176,14 @@ const AchievementsPage: React.FC = () => {
                         ease: "easeInOut"
                       }}
                     />
-                    <h3 className="text-xl font-bold text-white mb-1 group-hover/card:text-blue-300 transition-colors line-clamp-2 relative z-10">
+                    <h3 className="text-base sm:text-xl font-bold text-white mb-1 hover/card:text-blue-300 transition-colors line-clamp-2 relative z-10">
                       {a.title || a.name || "Achievement"}
                     </h3>
                   </motion.div>
 
                   {/* Organization (if available) */}
                     {a.organization && (
-                      <div className="text-sm text-blue-200 mb-2 font-medium truncate">
+                      <div className="text-xs sm:text-sm text-blue-200 mb-1 sm:mb-2 font-medium truncate">
                         {a.organization}
                       </div>
                     )}
@@ -197,16 +197,16 @@ const AchievementsPage: React.FC = () => {
                         initial={{ opacity: 0, x: -10 }}
                         whileInView={{ opacity: 1, x: 0 }}
                         transition={{ delay: i * 0.1 + 0.2 }}
-                        className="flex items-center gap-2 mb-4 px-3 py-1.5 rounded-full bg-gradient-to-r from-blue-500/20 to-cyan-500/20 border border-blue-500/30 w-fit"
+                        className="flex items-center gap-1 sm:gap-2 mb-2 sm:mb-4 px-2 sm:px-3 py-1 rounded-full bg-gradient-to-r from-blue-500/20 to-cyan-500/20 border border-blue-500/30 w-fit"
                       >
                         <Calendar size={14} className="text-blue-400" />
-                        <span className="text-xs font-semibold text-blue-300">{a.year || a.date}</span>
+                        <span className="text-[11px] sm:text-xs font-semibold text-blue-300">{a.year || a.date}</span>
                       </motion.div>
                     )}
                     
                     {/* Description */}
                     {a.description && (
-                      <p className="text-gray-300 text-sm leading-relaxed line-clamp-3 mb-4">
+                      <p className="text-gray-300 text-xs sm:text-sm leading-relaxed line-clamp-3 mb-2 sm:mb-4">
                         {a.description}
                       </p>
                     )}

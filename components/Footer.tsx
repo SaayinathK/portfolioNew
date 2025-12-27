@@ -34,27 +34,27 @@ export default function Footer() {
       viewport={{ once: true }}
       className="relative z-10 border-t border-blue-500/10 py-6"
     >
-      <div className="container mx-auto px-6">
-        <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+      <div className="container mx-auto px-4 sm:px-6">
+        <div className="flex flex-col gap-4 sm:gap-6 md:flex-row md:items-center md:justify-between">
           {/* Left section */}
-          <div className="flex items-center gap-3">
-            <div className="p-2 rounded-lg bg-gradient-to-r from-blue-500/20 to-purple-500/20">
+          <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-3 text-center sm:text-left">
+            <div className="p-2 rounded-lg bg-gradient-to-r from-blue-500/20 to-purple-500/20 mb-1 sm:mb-0">
               <Code size={20} className="text-blue-400" />
             </div>
-            <span className="text-gray-400">
+            <span className="text-gray-400 text-sm">
               © {new Date().getFullYear()} Saayinath Kanesamoorthy
             </span>
           </div>
-          
+
           {/* Center section */}
-          <div className="flex items-center gap-4">
-            <span className="text-gray-500 text-sm flex items-center gap-1">
+          <div className="flex flex-col items-center gap-1 sm:gap-0">
+            <span className="text-gray-500 text-xs sm:text-sm flex items-center gap-1">
               Built with <Heart size={12} className="text-blue-500" /> by a passionate developer using Next.js
             </span>
           </div>
 
           {/* Right section - Social links */}
-          <div className="flex items-center gap-4">
+          <div className="flex items-center justify-center gap-2 sm:gap-4 mt-2 md:mt-0">
             {contact?.email && (
               <a
                 href={`mailto:${contact.email}`}

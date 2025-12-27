@@ -76,10 +76,10 @@ import { SpeedInsights } from "@vercel/speed-insights/next"
 
     return (
       <main className="min-h-screen bg-black text-foreground overflow-hidden relative">
+        <div className="mt-24 space-y-12 relative">
         {/* Animated Background Elements */}
-                
-          {/* About Section - Hero Layout */}
-          <motion.section id="about" className="scroll-mt-24 relative">
+        {/* About Section - Hero Layout */}
+        <motion.section id="about" className="scroll-mt-24 relative">
             {!about ? (
               <div className="flex flex-col lg:flex-row gap-12 items-center justify-between">
                 <div className="w-80 h-80 rounded-3xl bg-gray-800 animate-pulse" />
@@ -116,7 +116,7 @@ import { SpeedInsights } from "@vercel/speed-insights/next"
                   ))}
                 </div>
 
-                <div className="flex flex-col lg:flex-row gap-16 items-center justify-between">
+                <div className="flex flex-col lg:flex-row gap-16 items-center justify-between px-2 sm:px-4 md:px-8">
                   {/* Profile Image - clean layout */}
                   <motion.div
                     initial={{ scale: 0.95, opacity: 0 }}
@@ -141,7 +141,7 @@ import { SpeedInsights } from "@vercel/speed-insights/next"
                       )}
                     </div>
 
-                    <div className="absolute -bottom-4 -right-4 bg-gray-900/90 text-white px-6 py-3 rounded-full text-sm font-semibold border border-gray-800">
+                    <div className="absolute -bottom-4 -right-0 bg-gray-900/90 text-white px-2 py-3 rounded-full text-sm font-semibold border border-gray-800">
                       <span className="animate-pulse">❤️</span> Available for opportunities
                     </div>
                   </motion.div>
@@ -151,7 +151,7 @@ import { SpeedInsights } from "@vercel/speed-insights/next"
                     initial={{ opacity: 0, x: 30 }}
                     whileInView={{ opacity: 1, x: 0 }}
                     transition={{ delay: 0.2 }}
-                    className="flex-1 space-y-6 relative"
+                    className="flex-1 space-y-4 sm:space-y-6 relative px-2 sm:px-4 md:px-8"
                   >
                     {/* Name & Title with typewriter effect */}
                     <div className="relative">
@@ -162,7 +162,7 @@ import { SpeedInsights } from "@vercel/speed-insights/next"
                         className="absolute top-0 left-0 h-0.5 bg-gradient-to-r from-gray-700 to-gray-600"
                       />
                       
-                      <p className="text-sm text-gray-400 font-mono mb-2 flex items-center gap-2">
+                      <p className="text-xs sm:text-sm px-2 sm:px-4 text-gray-400 font-mono mb-2 flex items-center gap-2">
                         <span className="animate-pulse">▶ // about_me.js</span>
                         <span className="text-green-400 text-xs ml-auto">running...</span>
                       </p>
@@ -171,10 +171,14 @@ import { SpeedInsights } from "@vercel/speed-insights/next"
                         initial={{ opacity: 0, y: 20 }}
                         whileInView={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.4 }}
-                        className="text-5xl md:text-6xl font-bold text-white mb-2 bg-gradient-to-r from-white to-gray-200 bg-clip-text text-transparent"
+                        className="mb-2 px-1 sm:px-0"
                       >
-                        {about?.firstName || "Your"}
-                        <span>{about?.lastName ? ` ${about.lastName}` : " Name"}</span>
+                        <span className="block text-2xl sm:text-4xl md:text-5xl font-bold mb-2 text-white mt-1 leading-tight">
+                          {about?.firstName || "Your"}
+                        </span>
+                        <span className="block text-2xl sm:text-4xl md:text-5xl font-bold mb-2 text-white mt-1 leading-tight">
+                          {about?.lastName ? about.lastName : "Name"}
+                        </span>
                       </motion.h1>
                       
                       <motion.div
@@ -183,7 +187,7 @@ import { SpeedInsights } from "@vercel/speed-insights/next"
                         transition={{ delay: 0.6 }}
                         className="inline-block mb-4"
                       >
-                        <p className="text-xl text-gray-400 font-mono bg-gray-900/50 px-4 py-3 rounded-lg border-l-4 border-gray-600">
+                        <p className="text-xs sm:text-xl text-gray-400 font-mono bg-gray-900/50 px-2 sm:px-4 py-2 sm:py-3 rounded-lg border-l-4 border-gray-600">
                           <span className="text-gray-300">&lt;</span>
                           <Typewriter
                             text={about.title || "React Native / Flutter Developer"}
@@ -200,7 +204,7 @@ import { SpeedInsights } from "@vercel/speed-insights/next"
                         initial={{ opacity: 0, y: 20 }}
                         whileInView={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.7 }}
-                        className="text-gray-400 text-sm leading-relaxed"
+                        className="text-gray-400 text-xs sm:text-sm leading-relaxed"
                       >
                         {about.shortBio}
                       </motion.div>
@@ -211,13 +215,13 @@ import { SpeedInsights } from "@vercel/speed-insights/next"
                       initial={{ opacity: 0, y: 20 }}
                       whileInView={{ opacity: 1, y: 0 }}
                       transition={{ delay: 0.8 }}
-                      className="space-y-3"
+                      className="space-y-2 sm:space-y-3"
                     >
-                      <div className="flex flex-wrap gap-3">
+                      <div className="flex flex-wrap gap-2 sm:gap-3">
                         {about.location && (
                           <motion.div
                             whileHover={{ scale: 1.05, y: -3 }}
-                            className="flex items-center gap-2 px-4 py-2 rounded-full border border-gray-700/50 bg-gray-900/90 backdrop-blur-sm text-gray-300 group cursor-pointer"
+                            className="flex items-center gap-1 sm:gap-2 px-2 sm:px-4 py-1 sm:py-2 rounded-full border border-gray-700/50 bg-gray-900/90 backdrop-blur-sm text-gray-300 group cursor-pointer text-xs sm:text-sm"
                           >
                             <MapPin size={18} />
                             <span>{about.location}</span>
@@ -234,7 +238,7 @@ import { SpeedInsights } from "@vercel/speed-insights/next"
                               setCopiedField && setCopiedField('aboutPhone');
                               setTimeout(() => setCopiedField && setCopiedField(null), 1200);
                             }}
-                            className="flex items-center gap-2 px-4 py-2 rounded-full border border-gray-700/50 bg-gray-900/90 backdrop-blur-sm text-gray-300 group cursor-pointer"
+                            className="flex items-center gap-1 sm:gap-2 px-2 sm:px-4 py-1 sm:py-2 rounded-full border border-gray-700/50 bg-gray-900/90 backdrop-blur-sm text-gray-300 group cursor-pointer text-xs sm:text-sm"
                           >
                             <Phone size={18} />
                             <span className="font-mono flex items-center gap-2">
@@ -256,7 +260,7 @@ import { SpeedInsights } from "@vercel/speed-insights/next"
                               setCopiedField && setCopiedField('aboutEmail');
                               setTimeout(() => setCopiedField && setCopiedField(null), 1200);
                             }}
-                            className="flex items-center gap-2 px-4 py-2 rounded-full border border-gray-700/50 bg-gray-900/90 backdrop-blur-sm text-gray-300 group cursor-pointer"
+                            className="flex items-center gap-1 sm:gap-2 px-2 sm:px-4 py-1 sm:py-2 rounded-full border border-gray-700/50 bg-gray-900/90 backdrop-blur-sm text-gray-300 group cursor-pointer text-xs sm:text-sm"
                           >
                             <Mail size={18} />
                             <span className="font-mono text-sm flex items-center gap-2">
@@ -276,7 +280,7 @@ import { SpeedInsights } from "@vercel/speed-insights/next"
                           initial={{ opacity: 0 }}
                           whileInView={{ opacity: 1 }}
                           transition={{ delay: 0.9 }}
-                          className="flex gap-3"
+                          className="flex gap-2 sm:gap-3"
                         >
                           {Array.isArray(contact) && contact.length > 0 && contact[0].linkedin && (
                             <motion.a
@@ -338,58 +342,68 @@ import { SpeedInsights } from "@vercel/speed-insights/next"
                       initial={{ opacity: 0, y: 20 }}
                       whileInView={{ opacity: 1, y: 0 }}
                       transition={{ delay: 1 }}
-                      className="flex flex-col md:flex-row gap-4 pt-6 flex-wrap w-full"
+                      className="flex flex-col md:flex-row gap-3 sm:gap-4 pt-4 sm:pt-8 flex-wrap w-full"
                     >
+                      {/* View My Work Button */}
                       <motion.a
-                        whileHover={{ scale: 1.05, x: -5 }}
-                        whileTap={{ scale: 0.95 }}
+                        whileHover={{ scale: 1.08, x: -6 }}
+                        whileTap={{ scale: 0.96 }}
                         href="#projects"
-                        className="relative w-full md:w-auto px-8 py-3 rounded-lg bg-gray-900 border border-gray-700 text-white font-medium hover:bg-gray-800 transition-all flex items-center justify-center gap-2 group overflow-hidden backdrop-blur-sm"
+                        className="relative w-full md:w-auto px-4 sm:px-10 py-2.5 sm:py-4 rounded-xl bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 border border-gray-700 text-white font-semibold hover:from-gray-800 hover:to-gray-700 transition-all flex items-center justify-center gap-2 sm:gap-3 group overflow-hidden shadow-xl backdrop-blur-md text-sm sm:text-lg"
                       >
-                        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
-                        <Code2 size={18} />
-                        View My Work
-                        <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
+                        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000 pointer-events-none" />
+                        <motion.div
+                          animate={{ rotate: [0, 10, -10, 0] }}
+                          transition={{ duration: 2, repeat: Number.POSITIVE_INFINITY, ease: 'easeInOut' }}
+                          className="text-cyan-400 drop-shadow-lg"
+                        >
+                          <Code2 size={24} />
+                        </motion.div>
+                        <span className="relative z-10">View My Work</span>
+                        <ArrowRight size={22} className="group-hover:translate-x-1 transition-transform text-cyan-300" />
                       </motion.a>
 
-                      {/* Attractive Resume Button - Responsive */}
+                      {/* Resume Button - Enhanced */}
                       <motion.a
-                        whileHover={{ scale: 1.07, rotate: [0, -2, 2, 0] }}
+                        whileHover={{ scale: 1.10, rotate: [0, -3, 3, 0] }}
                         whileTap={{ scale: 0.97 }}
                         href={about?.resumeUrl?.startsWith("data:") 
                           ? about.resumeUrl 
                           : `data:application/pdf;base64,${about?.resumeUrl}`}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="relative w-full md:w-auto px-8 py-3 rounded-lg bg-gradient-to-r from-blue-500 via-cyan-500 to-teal-400 text-white font-bold shadow-lg border-2 border-blue-500/30 hover:from-blue-500 hover:to-cyan-400 transition-all flex items-center justify-center gap-3 group overflow-hidden backdrop-blur-sm"
-                        style={{ boxShadow: "0 4px 24px 0 rgba(34,211,238,0.15)" }}
+                        className="relative w-full md:w-auto px-4 sm:px-10 py-2.5 sm:py-4 rounded-xl bg-gradient-to-br from-blue-900 via-cyan-900 to-black text-white font-extrabold shadow-2xl border-2 border-blue-500/40 hover:from-blue-700 hover:to-cyan-500 transition-all flex items-center justify-center gap-2 sm:gap-4 group overflow-hidden backdrop-blur-md text-sm sm:text-lg"
+                        style={{ boxShadow: "0 6px 32px 0 rgba(34,211,238,0.18)" }}
                         aria-label="View Resume"
                       >
-                        <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700" />
+                        <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 pointer-events-none" />
                         <motion.div
-                          animate={{ rotate: [0, 360] }}
-                          transition={{ duration: 2, repeat: Number.POSITIVE_INFINITY, ease: "linear" }}
+                          animate={{ rotate: [0, 10, -10, 0] }}
+                          transition={{ duration: 2, repeat: Number.POSITIVE_INFINITY, ease: 'easeInOut' }}
+                          className="text-cyan-300"
                         >
-                          <Download size={20} className="text-white drop-shadow" />
+                          <FileText size={26} />
                         </motion.div>
                         <span className="relative z-10">View Resume</span>
                       </motion.a>
 
+                      {/* Contact Me Button - Enhanced */}
                       <motion.a
-                        whileHover={{ scale: 1.05, rotate: [0, -2, 2, 0] }}
-                        whileTap={{ scale: 0.95 }}
+                        whileHover={{ scale: 1.08, rotate: [0, -2, 2, 0] }}
+                        whileTap={{ scale: 0.96 }}
                         href="#contact"
-                        className="relative w-full md:w-auto px-8 py-3 rounded-lg bg-white text-black font-medium hover:bg-gray-100 transition-all flex items-center justify-center gap-2 shadow-lg group overflow-hidden"
+                        className="relative w-full md:w-auto px-4 sm:px-10 py-2.5 sm:py-4 rounded-xl bg-gradient-to-br from-white via-gray-100 to-gray-300 text-black font-semibold hover:from-gray-200 hover:to-white transition-all flex items-center justify-center gap-2 sm:gap-3 shadow-xl group overflow-hidden text-sm sm:text-lg"
                       >
-                        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
+                        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-black/10 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000 pointer-events-none" />
                         <motion.div
-                          animate={{ rotate: [0, 360] }}
-                          transition={{ duration: 3, repeat: Number.POSITIVE_INFINITY, ease: "linear" }}
+                          animate={{ rotate: [0, 10, -10, 0] }}
+                          transition={{ duration: 2, repeat: Number.POSITIVE_INFINITY, ease: 'easeInOut' }}
+                          className="text-blue-500 drop-shadow-lg"
                         >
-                          <Download size={18} />
+                          <Mail size={22} />
                         </motion.div>
-                        Contact Me
-                        <span className="ml-1 group-hover:scale-125 transition-transform">→</span>
+                        <span className="relative z-10">Contact Me</span>
+                        <span className="ml-1 group-hover:scale-125 transition-transform text-blue-500">→</span>
                       </motion.a>
                     </motion.div>
                   </motion.div>
@@ -403,7 +417,7 @@ import { SpeedInsights } from "@vercel/speed-insights/next"
                 initial={{ opacity: 0, y: 40 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.5 }}
-                className="mt-24 space-y-12 relative"
+                className="mt-24 space-y-12 relative px-2 sm:px-4 md:px-8"
               >
                 {/* Animated binary rain background */}
                 <div className="absolute inset-0 overflow-hidden -z-10 pointer-events-none">
@@ -430,23 +444,22 @@ import { SpeedInsights } from "@vercel/speed-insights/next"
                 </div>
 
                 {/* Two-column layout: Left = Bio, Right = Motto + Skills */}
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-8 items-start">
                   {/* Left: Bio Section with Interactive Code Editor */}
-                  <div className="space-y-4">
-                    <div className="bg-black border border-gray-800 rounded-2xl p-6 space-y-4 backdrop-blur-sm">
-                      <div className="flex items-center justify-between mb-4">
+                  <div className="space-y-2 sm:space-y-4">
+                    <div className="bg-black border border-gray-800 rounded-xl sm:rounded-2xl p-3 sm:p-6 space-y-2 sm:space-y-4 backdrop-blur-sm">
+                      <div className="flex items-center justify-between mb-2 sm:mb-4">
                         <div className="flex items-center gap-2">
-                          <FileText size={20} className="text-gray-400" />
-                          <span className="text-gray-300 font-mono">bio.ad</span>
+                          <FileText size={16} className="text-gray-400" />
+                          <span className="text-gray-300 font-mono text-xs sm:text-base">bio.ad</span>
                         </div>
-                        
                       </div>
 
                       <motion.p
                         initial={{ opacity: 0, x: -20 }}
                         whileInView={{ opacity: 1, x: 0 }}
                         transition={{ delay: 0.1 }}
-                        className="text-gray-300 pl-4 border-l-2 border-gray-600/50 hover:border-gray-600/90 transition-all group whitespace-pre-line"
+                        className="text-gray-300 text-xs sm:text-base pl-2 sm:pl-4 border-l-2 border-gray-600/50 hover:border-gray-600/90 transition-all group whitespace-pre-line"
                       >
                         {about.longBio}
                       </motion.p>
@@ -454,11 +467,11 @@ import { SpeedInsights } from "@vercel/speed-insights/next"
                   </div>
 
                   {/* Right: Motto terminal + Skill cards stacked */}
-                  <div className="space-y-8">
+                  <div className="space-y-4 sm:space-y-8">
                     {/* Interactive Code Motto Terminal */}
                     <motion.div
                       whileHover={{ scale: 1.02 }}
-                      className="relative bg-black border border-gray-800 rounded-2xl p-6 font-mono text-sm backdrop-blur-sm overflow-hidden group"
+                      className="relative bg-black border border-gray-800 rounded-xl sm:rounded-2xl p-3 sm:p-6 font-mono text-xs sm:text-sm backdrop-blur-sm overflow-hidden group"
                     >
                       {/* Terminal header */}
                       <div className="flex items-center gap-2 mb-4">
@@ -467,7 +480,7 @@ import { SpeedInsights } from "@vercel/speed-insights/next"
                           <div className="w-3 h-3 rounded-full bg-yellow-500/70" />
                           <div className="w-3 h-3 rounded-full bg-green-500/70" />
                         </div>
-                        <span className="text-gray-400 text-xs">terminal — motto.js</span>
+                        <span className="text-gray-400 text-[10px] sm:text-xs">terminal — motto.js</span>
                         <div className="ml-auto flex items-center gap-2">
                           <motion.span
                             animate={{ opacity: [1, 0.5, 1] }}
@@ -480,9 +493,9 @@ import { SpeedInsights } from "@vercel/speed-insights/next"
 
                       {/* Typing animation for motto */}
                       <div className="space-y-2">
-                        <p className="text-gray-500">$ node motto.js</p>
+                        <p className="text-gray-500 text-xs sm:text-sm">$ node motto.js</p>
 
-                        <div className="flex items-start gap-2">
+                        <div className="flex items-start gap-1 sm:gap-2">
                           <span className="text-green-400">▶</span>
                           <Typewriter
                             text={`const motto = "${about.motto || 'Code with purpose, design with passion'}";`}
@@ -502,7 +515,7 @@ import { SpeedInsights } from "@vercel/speed-insights/next"
                           initial={{ opacity: 0 }}
                           whileInView={{ opacity: 1 }}
                           transition={{ delay: 2 }}
-                          className="text-gray-200"
+                          className="text-gray-200 text-xs sm:text-sm"
                         >
                           $ Output: Executing with passion and precision... 🚀
                         </motion.p>
@@ -561,7 +574,7 @@ import { SpeedInsights } from "@vercel/speed-insights/next"
                         className="group overflow-x-auto pb-6 scroll-smooth [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
                         style={{ scrollbarWidth: "none" }}
                       >
-                        <div className="flex gap-4 min-w-full whitespace-nowrap pr-6 snap-x snap-mandatory">
+                        <div className="flex gap-2 sm:gap-4 min-w-full whitespace-nowrap pr-2 sm:pr-6 snap-x snap-mandatory">
                           {(() => {
                             const defaultSkills = [
                               { icon: <Code2 size={32} key="icon-code2" />, title: "Full-Stack Development", color: "purple", emoji: "⚛️" },
@@ -594,7 +607,7 @@ import { SpeedInsights } from "@vercel/speed-insights/next"
                                   scale: 1.05,
                                   transition: { type: "spring", stiffness: 300 }
                                 }}
-                                className="relative p-6 rounded-2xl border border-gray-800 bg-black backdrop-blur-sm group overflow-hidden cursor-pointer min-w-[260px] snap-start"
+                                className="relative p-3 sm:p-6 rounded-xl sm:rounded-2xl border border-gray-800 bg-black backdrop-blur-sm group overflow-hidden cursor-pointer min-w-[160px] sm:min-w-[260px] snap-start text-xs sm:text-base"
                               >
                                 {/* Animated gradient border */}
                                 <div key="gradient-border" className={`absolute inset-0 bg-gradient-to-br from-gray-800/10 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500`} />
@@ -657,6 +670,7 @@ import { SpeedInsights } from "@vercel/speed-insights/next"
 
         {/* Vercel Speed Insights */}
         <SpeedInsights />
+        </div>
       </main>
     );
   }

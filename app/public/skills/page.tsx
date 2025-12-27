@@ -130,12 +130,12 @@ const TypingLabel = ({ text }: { text: string }) => {
       id="skills"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      className="scroll-mt-20"
+      className="scroll-mt-20 px-2 sm:px-0"
     >
       {loading ? (
         <div className="grid gap-1 md:grid-cols-2 lg:grid-cols-3">
           {[1,2,3,4,5,6].map((i) => (
-            <div key={i} className="h-40 rounded-2xl bg-gradient-to-br from-white/5 to-transparent border border-white/10 animate-pulse" />
+            <div key={i} className="h-28 sm:h-40 rounded-2xl bg-gradient-to-br from-white/5 to-transparent border border-white/10 animate-pulse" />
           ))}
         </div>
       ) : (
@@ -169,7 +169,7 @@ const TypingLabel = ({ text }: { text: string }) => {
                         scale: 1.03,
                         transition: { duration: 0.2 },
                       }}
-                      className="group relative rounded-2xl p-6 min-w-[260px] border border-gray-800/60 bg-black/70 backdrop-blur-lg transition-all hover:-translate-y-1.5 hover:shadow-[0_20px_60px_rgba(59,130,246,0.3)] hover:border-blue-400"
+                      className="group relative rounded-2xl p-3 sm:p-6 min-w-[180px] sm:min-w-[260px] border border-gray-800/60 bg-black/70 backdrop-blur-lg transition-all hover:-translate-y-1.5 hover:shadow-[0_20px_60px_rgba(59,130,246,0.3)] hover:border-blue-400"
                     >
                       <motion.div
                         className="absolute inset-0 bg-gradient-to-br from-blue-500/10 via-black/30 to-blue-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
@@ -177,7 +177,7 @@ const TypingLabel = ({ text }: { text: string }) => {
                         transition={{ duration: 3, repeat: Number.POSITIVE_INFINITY, ease: "easeInOut" }}
                       />
                       <div className="relative">
-                        <div className="flex items-center gap-4 mb-4">
+                        <div className="flex items-center gap-2 sm:gap-4 mb-3 sm:mb-4">
                           <motion.div
                             className="w-14 h-14 rounded-xl inline-flex items-center justify-center bg-gradient-to-br from-blue-500/20 to-white/10 shadow-lg group-hover:shadow-blue-400/30 transition-shadow"
                             whileHover={{ rotate: [0, -10, 10, -10, 0] }}
@@ -186,7 +186,7 @@ const TypingLabel = ({ text }: { text: string }) => {
                             <Globe className="w-7 h-7 text-blue-400" />
                           </motion.div>
                           <div className="flex-1">
-                            <h4 className="font-bold text-white text-xl group-hover:text-blue-400 transition-colors">
+                            <h4 className="font-bold text-white text-base sm:text-xl group-hover:text-blue-400 transition-colors">
                               {lang.language}
                             </h4>
                           </div>
@@ -214,7 +214,7 @@ const TypingLabel = ({ text }: { text: string }) => {
                               className="h-full bg-gradient-to-r from-blue-400 to-blue-600 rounded-full"
                             />
                           </div>
-                          <span className="text-xs text-gray-400 font-mono">
+                          <span className="text-[11px] sm:text-xs text-gray-400 font-mono">
                             {lang.languageProficiency || "Not specified"}
                           </span>
                         </div>
@@ -244,10 +244,10 @@ const TypingLabel = ({ text }: { text: string }) => {
                 <Code2 className="w-5 h-5 text-blue-400" />
                 <TypingLabel text="set skills.technical()"/>
               </div>
-              <h3 className="text-4xl md:text-5xl font-extrabold bg-white bg-clip-text text-transparent tracking-tight">
+              <h3 className="text-2xl sm:text-4xl md:text-5xl font-extrabold bg-white bg-clip-text text-transparent tracking-tight">
                 Technical Arsenal
               </h3>
-              <p className="text-gray-400 text-lg mt-3 max-w-xl mx-auto">
+              <p className="text-gray-400 text-xs sm:text-lg mt-2 sm:mt-3 max-w-xs sm:max-w-xl mx-auto">
                 Technologies and tools I work with to build amazing solutions
               </p>
             </motion.div>
@@ -271,7 +271,7 @@ const TypingLabel = ({ text }: { text: string }) => {
                       scale: 1.02,
                       transition: { duration: 0.2 }
                     }}
-                    className={`group relative rounded-2xl p-6 min-w-[260px] border ${meta.classes.border} bg-gradient-to-br ${meta.classes.gradient} to-transparent backdrop-blur-xl hover:border-blue-500 hover:shadow-[0_20px_60px_rgba(59,130,246,0.3)] transition-all overflow-hidden`}
+                    className={`group relative rounded-2xl p-3 sm:p-6 min-w-[180px] sm:min-w-[260px] border ${meta.classes.border} bg-gradient-to-br ${meta.classes.gradient} to-transparent backdrop-blur-xl hover:border-blue-500 hover:shadow-[0_20px_60px_rgba(59,130,246,0.3)] transition-all overflow-hidden`}
                   >
                     <motion.div 
                       className="absolute inset-0 bg-gradient-to-br from-blue-500/10 via-black/30 to-blue-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
@@ -285,7 +285,7 @@ const TypingLabel = ({ text }: { text: string }) => {
                       }}
                     />
                     <div className="relative">
-                      <div className="flex items-center gap-3 mb-6">
+                      <div className="flex items-center gap-2 sm:gap-3 mb-3 sm:mb-6">
                         <motion.div 
                           className={`w-12 h-12 rounded-xl inline-flex items-center justify-center ${meta.classes.iconBg} shadow-lg`}
                           whileHover={{ rotate: [0, -5, 5, -5, 0], scale: 1.1 }}
@@ -293,11 +293,11 @@ const TypingLabel = ({ text }: { text: string }) => {
                         >
                           {meta.icon}
                         </motion.div>
-                        <h3 className="text-lg md:text-xl font-bold text-white group-hover:scale-105 transition-transform">
+                        <h3 className="text-base sm:text-lg md:text-xl font-bold text-white group-hover:scale-105 transition-transform">
                           {subtype}
                         </h3>
                       </div>
-                      <div className="flex flex-wrap gap-2">
+                      <div className="flex flex-wrap gap-1 sm:gap-2">
                         {subtypeSkills.map((skill, skillIdx) => (
                           <motion.span
                             key={skill._id}
@@ -306,7 +306,7 @@ const TypingLabel = ({ text }: { text: string }) => {
                             viewport={{ once: true }}
                             transition={{ delay: idx * 0.1 + skillIdx * 0.05 }}
                             whileHover={{ scale: 1.05, y: -2 }}
-                            className={`px-3 py-1.5 rounded-lg text-sm font-medium border ${meta.classes.chip} hover:bg-opacity-20 transition-all cursor-default`}
+                            className={`px-2 py-1 sm:px-3 sm:py-1.5 rounded-lg text-[11px] sm:text-sm font-medium border ${meta.classes.chip} hover:bg-opacity-20 transition-all cursor-default`}
                           >
                             {skill.name}
                           </motion.span>

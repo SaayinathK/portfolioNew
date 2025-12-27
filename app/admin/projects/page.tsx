@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Image from "next/image";
 import ProjectForm, { ProjectFormValues } from "@/components/ProjectForm";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -21,9 +20,8 @@ import {
   X
 } from "lucide-react";
 
-interface Project extends Omit<ProjectFormValues, "tags"> {
+interface Project extends ProjectFormValues {
   _id: string;
-  tags: string[];
   createdAt?: string;
 }
 
@@ -32,7 +30,7 @@ export default function AdminProjectsPage() {
   const [editing, setEditing] = useState<Project | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedTag, setSelectedTag] = useState<string | null>(null);
+  // Removed selectedTag and tag filtering
   const [showDeleteConfirm, setShowDeleteConfirm] = useState<string | null>(null);
 
   const loadProjects = async () => {
@@ -46,16 +44,10 @@ export default function AdminProjectsPage() {
   }, []);
 
   const handleCreate = async (values: ProjectFormValues) => {
-    const payload = {
-      ...values,
-      tags: values.tags
-        ? values.tags.split(",").map((t) => t.trim()).filter(Boolean)
-        : [],
-    };
     await fetch("/api/projects", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
+      body: JSON.stringify(values),
     });
     setEditing(null);
     await loadProjects();
@@ -63,16 +55,15 @@ export default function AdminProjectsPage() {
 
   const handleUpdate = async (values: ProjectFormValues) => {
     if (!values._id) return;
-    const payload = {
-      ...values,
-      tags: values.tags
-        ? values.tags.split(",").map((t) => t.trim()).filter(Boolean)
-        : [],
-    };
     await fetch("/api/projects", {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
+      body: JSON.stringify(values),
+    });
+    await fetch("/api/projects", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(values),
     });
     setEditing(null);
     await loadProjects();
@@ -93,20 +84,31 @@ export default function AdminProjectsPage() {
     }
   };
 
-  const allTags = Array.from(new Set(projects.flatMap(p => p.tags)));
+  // Technologies/Framework filter (if needed in future)
+  const allTechs = Array.from(
+    new Set(
+      projects
+        .map(p =>
+          typeof p.technologiesFramework === "string"
+            ? p.technologiesFramework.split(",").map(t => t.trim())
+            : Array.isArray(p.technologiesFramework)
+            ? p.technologiesFramework
+            : []
+        )
+        .flat()
+        .filter(Boolean)
+    )
+  );
 
-  const filteredProjects = Array.isArray(projects)
-    ? projects.filter(project => {
-        const matchesSearch = 
-          project.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          project.description.toLowerCase().includes(searchTerm.toLowerCase());
-        const matchesTag = selectedTag ? project.tags.includes(selectedTag) : true;
-        return matchesSearch && matchesTag;
-      })
-    : [];
+  const filteredProjects = projects.filter(project => {
+    const matchesSearch =
+      project.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      project.description.toLowerCase().includes(searchTerm.toLowerCase());
+    // No tag filter, could add tech filter here if needed
+    return matchesSearch;
+  });
 
-  const activeProjects = Array.isArray(projects) ? projects.filter(p => p.liveLink).length : 0;
-  const totalTags = allTags.length;
+  const activeProjects = projects.filter(p => p.liveLink).length;
 
   return (
     <div className="space-y-10">
@@ -136,8 +138,8 @@ export default function AdminProjectsPage() {
               <div className="text-sm text-gray-500">Live</div>
             </div>
             <div className="text-center">
-              <div className="text-2xl font-bold text-purple-600">{totalTags}</div>
-              <div className="text-sm text-gray-500">Tags</div>
+              <div className="text-2xl font-bold text-purple-600">{allTechs.length}</div>
+              <div className="text-sm text-gray-500">Techs</div>
             </div>
           </div>
 
@@ -176,7 +178,7 @@ export default function AdminProjectsPage() {
             </div>
 
             <ProjectForm
-              initialValues={editing ? { ...editing, tags: editing.tags.join(", ") } : undefined}
+              initialValues={editing ? { ...editing } : undefined}
               onSubmit={editing ? handleUpdate : handleCreate}
               submitLabel={
                 <span className="flex items-center justify-center gap-2">
@@ -206,30 +208,20 @@ export default function AdminProjectsPage() {
                 />
               </div>
 
+              {/* Technologies/Framework badges (future filter) */}
               <div className="flex items-center gap-2 flex-wrap">
                 <Filter size={18} className="text-gray-400" />
                 <div className="flex flex-wrap gap-2">
-                  <button
-                    onClick={() => setSelectedTag(null)}
-                    className={`rounded-full px-4 py-1.5 text-sm font-medium transition-all ${
-                      selectedTag === null ? "bg-blue-600 text-white" : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-                    }`}
-                  >
-                    All
-                  </button>
-                  {allTags.slice(0, 3).map(tag => (
-                    <button
-                      key={tag}
-                      onClick={() => setSelectedTag(tag)}
-                      className={`rounded-full px-4 py-1.5 text-sm font-medium transition-all ${
-                        selectedTag === tag ? "bg-purple-600 text-white" : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-                      }`}
+                  {allTechs.slice(0, 3).map(tech => (
+                    <span
+                      key={tech}
+                      className="rounded-full px-4 py-1.5 text-sm font-medium bg-gray-100 text-gray-700 border border-gray-200"
                     >
-                      {tag}
-                    </button>
+                      {tech}
+                    </span>
                   ))}
-                  {allTags.length > 3 && (
-                    <span className="px-3 py-1.5 text-sm text-gray-500">+{allTags.length - 3} more</span>
+                  {allTechs.length > 3 && (
+                    <span className="px-3 py-1.5 text-sm text-gray-500">+{allTechs.length - 3} more</span>
                   )}
                 </div>
               </div>
@@ -250,12 +242,12 @@ export default function AdminProjectsPage() {
                   <Archive size={32} className="text-gray-400" />
                 </div>
                 <h3 className="text-xl font-semibold text-gray-700">
-                  {searchTerm || selectedTag ? "No matching projects" : "No projects yet"}
+                  {searchTerm ? "No matching projects" : "No projects yet"}
                 </h3>
                 <p className="mt-2 text-gray-500">
-                  {searchTerm || selectedTag ? "Adjust your search or filter criteria." : "Create your first project!"}
+                  {searchTerm ? "Adjust your search criteria." : "Create your first project!"}
                 </p>
-                {!searchTerm && !selectedTag && (
+                {!searchTerm && (
                   <button
                     onClick={() => setEditing(null)}
                     className="mt-6 inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 px-6 py-3 font-medium text-white hover:from-blue-700 hover:to-indigo-700 transition-all duration-300"
@@ -280,12 +272,10 @@ export default function AdminProjectsPage() {
                   >
                     {project.imageUrl && (
                       <div className="relative h-52 overflow-hidden">
-                        <Image
+                        <img
                           src={project.imageUrl}
                           alt={project.title}
-                          fill
                           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                          unoptimized={project.imageUrl?.startsWith("/uploads/")}
                         />
                         <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
                       </div>
@@ -294,7 +284,7 @@ export default function AdminProjectsPage() {
                       <div className="flex items-start justify-between mb-4">
                         <div className="flex-1">
                           <div className="flex items-center gap-3 mb-2">
-                            <h3 className="text-lg font-bold text-gray-900 group-hover:text-blue-600 transition-colors">
+                            <h3 className="text-lg font-bold text-gray-900 group-hover:text-blue-600 transition-colors truncate max-w-[220px]" title={project.title} style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                               {project.title}
                             </h3>
                             <div className="flex items-center gap-1">
@@ -310,17 +300,29 @@ export default function AdminProjectsPage() {
                               )}
                             </div>
                           </div>
-                          <p className="text-gray-700 line-clamp-2">{project.description}</p>
+                          <div className="flex flex-wrap gap-2 mb-1">
+                            {project.projectType && (
+                              <span className="px-2 py-0.5 rounded bg-blue-100 text-blue-700 text-xs font-semibold">{project.projectType}</span>
+                            )}
+                            {project.contribution && (
+                              <span className="px-2 py-0.5 rounded bg-cyan-100 text-cyan-700 text-xs font-semibold">{project.contribution === "individual" ? "Individual" : "Team"}</span>
+                            )}
+                            {project.year && (
+                              <span className="px-2 py-0.5 rounded bg-gray-100 text-gray-700 text-xs font-semibold">{project.year}</span>
+                            )}
+                          </div>
+                          <p className="text-gray-700 line-clamp-2 mb-1">{project.description}</p>
+                          {project.technologiesFramework && (
+                            <div className="flex flex-wrap gap-1 mb-1">
+                              {(typeof project.technologiesFramework === 'string' ? project.technologiesFramework.split(',').map(t => t.trim()) : Array.isArray(project.technologiesFramework) ? project.technologiesFramework : []).filter(Boolean).map((tech, idx) => (
+                                <span key={tech + idx} className="px-2 py-0.5 rounded bg-gradient-to-r from-blue-500/10 to-cyan-500/10 text-blue-700 border border-blue-500/20 text-xs font-medium">{tech}</span>
+                              ))}
+                            </div>
+                          )}
                         </div>
                       </div>
 
-                      <div className="mb-4 flex flex-wrap gap-2">
-                        {project.tags.map(tag => (
-                          <span key={tag} className="rounded-full bg-gradient-to-r from-gray-100 to-gray-50 px-3 py-1 text-xs font-medium text-gray-800 border border-gray-200">
-                            {tag}
-                          </span>
-                        ))}
-                      </div>
+                      {/* No tags, replaced by tech badges above */}
 
                       <div className="flex items-center justify-between pt-4 border-t border-gray-100">
                         <div className="flex items-center gap-4 text-sm text-gray-500">

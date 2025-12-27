@@ -20,6 +20,10 @@ interface Project {
   tags?: string[];
   tech?: string[];
   type?: string;
+  year?: string | number;
+  technologiesFramework?: string[] | string;
+  projectType?: string;
+  contribution?: string; // Added property
 }
 
 const SectionHeader: React.FC<{ title: string; subtitle: string; codeComment: string }> = ({
@@ -37,6 +41,11 @@ const SectionHeader: React.FC<{ title: string; subtitle: string; codeComment: st
 const ProjectsPage: React.FC = () => {
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
+  const [expandedDesc, setExpandedDesc] = useState<{ [key: number]: boolean }>({});
+
+  const handleToggleDesc = (idx: number) => {
+    setExpandedDesc((prev) => ({ ...prev, [idx]: !prev[idx] }));
+  };
 
   useEffect(() => {
     fetch("/api/projects")
@@ -53,7 +62,7 @@ const ProjectsPage: React.FC = () => {
       id="projects"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      className="scroll-mt-20"
+      className="scroll-mt-20 px-2 sm:px-0"
     >
       {loading ? (
         <div className="flex gap-6 overflow-x-auto pb-4">
@@ -87,7 +96,7 @@ const ProjectsPage: React.FC = () => {
           {/* Scrollable Projects */}
           <div
             id="projects-scroll"
-            className="flex gap-6 overflow-x-auto pb-4 scroll-smooth"
+            className="flex gap-4 sm:gap-6 overflow-x-auto pb-3 sm:pb-4 scroll-smooth"
             style={{
               scrollBehavior: "smooth",
               scrollbarWidth: "thin",
@@ -111,17 +120,19 @@ const ProjectsPage: React.FC = () => {
                   viewport={{ once: true }}
                   transition={{ delay: i * 0.05 }}
                   whileHover={{ y: -8 }}
-                  className="flex-shrink-0 w-96 group relative rounded-2xl border-2 border-gray-800 bg-black backdrop-blur-sm overflow-hidden hover:border-gray-700 transition-all flex flex-col"
+                  className="flex-shrink-0 w-80 sm:w-96 group relative rounded-2xl border-2 border-gray-800 bg-black backdrop-blur-sm overflow-hidden hover:border-gray-700 transition-all flex flex-col"
                 >
                   {/* Terminal header */}
-                  <div className="flex items-center justify-between px-4 py-3 border-b border-blue-500/20 bg-slate-900/50">
+                  <div className="flex items-center justify-between px-3 py-2 sm:px-4 sm:py-3 border-b border-blue-500/20 bg-slate-900/50">
                     <div className="flex items-center gap-2">
                       <div className="flex gap-1.5">
                         <div className="w-3 h-3 rounded-full bg-red-500" />
                         <div className="w-3 h-3 rounded-full bg-yellow-500" />
                         <div className="w-3 h-3 rounded-full bg-green-500" />
                       </div>
-                      <span className="text-xs text-gray-400 font-mono ml-2">{filename}.tsx</span>
+                      <span className="text-xs text-gray-400 font-mono ml-2">
+                        {p.projectType ? p.projectType : "project"}.tsx
+                      </span>
                     </div>
                     <div className="flex items-center gap-2">
                       {liveLink && (
@@ -148,7 +159,7 @@ const ProjectsPage: React.FC = () => {
                   </div>
 
                   {/* Project Image / Placeholder */}
-                  <div className="relative h-48 overflow-hidden bg-slate-800/50">
+                  <div className="relative h-32 sm:h-48 overflow-hidden bg-slate-800/50">
                     {imageUrl ? (
                       <Image
                         src={imageUrl}
@@ -167,39 +178,94 @@ const ProjectsPage: React.FC = () => {
                   </div>
 
                   {/* Content */}
-                  <div className="p-6 flex-1">
+                  <div className="p-3 sm:p-6 flex-1">
                     {/* Title with Icon */}
                     <div className="flex items-start gap-3 mb-3">
                       <div className="p-2 rounded-lg bg-gradient-to-br from-blue-500/20 to-cyan-500/20 flex-shrink-0">
                         <Terminal size={18} className="text-blue-400" />
                       </div>
                       <div className="flex-1 min-w-0">
-                        <h3 className="text-lg font-bold text-white mb-1 group-hover:text-blue-400 transition-colors truncate">
+                        <h3 className="text-base sm:text-xl font-bold text-white mb-1 group-hover/card:text-blue-300 transition-colors line-clamp-2 relative z-10 hover:text-blue-400 transition-colors">
                           {title}
                         </h3>
-                        <p className="text-xs text-gray-500 font-mono">{p.type || "Web Application"}</p>
+                        {p.contribution && (
+                          <div>
+                            <p className="text-[11px] sm:text-xs text-cyan-400 font-mono">
+                              {p.contribution === "individual" ? "Individual" : p.contribution === "team" ? "Team" : p.contribution}
+                            </p>
+                          </div>
+                        )}
+                        
                       </div>
                     </div>
 
-                    {/* Description */}
-                    <p className="text-gray-400 text-sm leading-relaxed mb-4 line-clamp-2">{desc}</p>
-
-                    {/* Tags */}
-                    <div className="flex flex-wrap gap-2">
-                      {tags.slice(0, 3).map((t: string, idx: number) => (
-                        <span
-                          key={t}
-                          className="px-2.5 py-1 rounded-md text-xs font-medium bg-gradient-to-r from-blue-500/10 to-cyan-500/10 text-blue-300 border border-blue-500/20"
-                        >
-                          {t}
-                        </span>
-                      ))}
-                      {tags.length > 3 && (
-                        <span className="px-2.5 py-1 rounded-md text-xs font-medium bg-gradient-to-r from-blue-500/10 to-cyan-500/10 text-blue-300 border border-blue-500/20">
-                          +{tags.length - 3}
-                        </span>
+                    {/* Description with See more */}
+                    <div>
+                      {expandedDesc[i] ? (
+                        <>
+                          <p
+                            className="text-gray-400 text-sm leading-relaxed mb-2 max-h-32 overflow-y-auto pr-1"
+                            style={{ scrollbarWidth: 'thin' }}
+                          >
+                            {desc}
+                          </p>
+                          <button
+                            className="text-xs text-blue-400 hover:underline focus:outline-none mb-2"
+                            onClick={() => {
+                              handleToggleDesc(i);
+                              // Scroll to top of description after collapsing
+                              setTimeout(() => {
+                                const el = document.getElementById(`desc-${i}`);
+                                if (el) el.scrollTop = 0;
+                              }, 0);
+                            }}
+                            type="button"
+                          >
+                            Show less
+                          </button>
+                        </>
+                      ) : (
+                        <>
+                          <p
+                            id={`desc-${i}`}
+                            className="text-gray-400 text-sm leading-relaxed mb-2 line-clamp-2"
+                          >
+                            {desc}
+                          </p>
+                          {desc.length > 120 && (
+                            <button
+                              className="text-xs text-blue-400 hover:underline focus:outline-none mb-2"
+                              onClick={() => handleToggleDesc(i)}
+                              type="button"
+                            >
+                              See more
+                            </button>
+                          )}
+                        </>
                       )}
                     </div>
+
+                    {/* Technologies/Framework */}
+                    {(() => {
+                      let techs: string[] = [];
+                      if (Array.isArray(p.technologiesFramework)) {
+                        techs = p.technologiesFramework;
+                      } else if (typeof p.technologiesFramework === "string" && p.technologiesFramework.length > 0) {
+                        techs = p.technologiesFramework.split(",").map(t => t.trim()).filter(Boolean);
+                      }
+                      return techs.length > 0 ? (
+                        <div className="flex flex-wrap gap-2">
+                          {techs.map((t: string, idx: number) => (
+                            <span
+                              key={t + idx}
+                              className="px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-md text-[11px] sm:text-xs font-medium bg-gradient-to-r from-blue-500/10 to-cyan-500/10 text-blue-300 border border-blue-500/20"
+                            >
+                              {t}
+                            </span>
+                          ))}
+                        </div>
+                      ) : null;
+                    })()}
                   </div>
                 </motion.article>
               );

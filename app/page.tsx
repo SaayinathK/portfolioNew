@@ -58,7 +58,7 @@ const ContactSection = dynamic(() => import("./public/contact/page"), { ssr: fal
 
     return (
       <main className="min-h-screen bg-black text-foreground overflow-hidden relative">
-        <div className="container mx-auto px-6 py-24 max-w-7xl relative z-10 space-y-40">
+        <div className="container mx-auto px-4 py-4 max-w-7xl relative z-10 space-y-40">
           {/* About Section - Hero Layout */}
           <motion.section id="about" className="scroll-mt-24 relative">
             <AboutSection />

@@ -156,14 +156,6 @@ const GalleryPage: React.FC = () => {
               const src = g.images?.[0] || g.image || g.url || g.imageUrl || g.src;
               const alt = g.title || "Gallery item";
               const imageCount = g.images?.length || 1;
-
-              const galleryColorSchemes = [
-                { glow: "from-blue-600/20 to-cyan-600/20" },
-                { glow: "from-sky-600/20 to-blue-600/20" },
-                { glow: "from-cyan-600/20 to-sky-600/20" },
-              ];
-              const galleryColorScheme = galleryColorSchemes[i % 3];
-
               return (
                 <motion.figure
                   key={g._id || src}
@@ -191,7 +183,7 @@ const GalleryPage: React.FC = () => {
                 >
                   {/* Animated border glow */}
                   <motion.div
-                    className={`absolute inset-0 bg-gradient-to-br ${galleryColorScheme.glow} opacity-0 group-hover/card:opacity-100 transition-opacity duration-500`}
+                    className="absolute inset-0 bg-gradient-to-br from-blue-500/30 to-cyan-400/10 opacity-0 group-hover/card:opacity-100 transition-opacity duration-500"
                     animate={{
                       scale: [1, 1.05, 1],
                     }}
@@ -236,43 +228,16 @@ const GalleryPage: React.FC = () => {
                     </div>
                   )}
 
-                  {/* Enhanced Caption Overlay */}
-                  {g.title && (
-                    <motion.figcaption
-                      initial={{ y: "100%" }}
-                      whileHover={{ y: 0 }}
-                      className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black via-black/95 to-transparent"
-                    >
-                      <motion.h4
-                        className="text-white font-bold text-lg mb-2 line-clamp-2"
-                        initial={{ opacity: 0, y: 10 }}
-                        whileHover={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.1 }}
-                      >
-                        {g.title}
-                      </motion.h4>
-                      {g.description && (
-                        <motion.p
-                          className="text-gray-300 text-sm line-clamp-2"
-                          initial={{ opacity: 0, y: 10 }}
-                          whileHover={{ opacity: 1, y: 0 }}
-                          transition={{ delay: 0.15 }}
-                        >
-                          {g.description}
-                        </motion.p>
+                  {/* Album Title & Description Glass Overlay */}
+                  {(g.title || g.description) && (
+                    <div className="absolute bottom-0 left-0 right-0 px-4 py-3 bg-white/10 backdrop-blur-md rounded-b-3xl">
+                      {g.title && (
+                        <div className="text-white font-bold text-lg mb-1 truncate drop-shadow-sm">
+                          {g.title}
+                        </div>
                       )}
-
-                      {/* View indicator */}
-                      <motion.div
-                        className="mt-3 flex items-center gap-2 text-blue-400 text-xs font-semibold"
-                        initial={{ opacity: 0 }}
-                        whileHover={{ opacity: 1 }}
-                        transition={{ delay: 0.2 }}
-                      >
-                        <Eye size={14} />
-                        <span>Click to view</span>
-                      </motion.div>
-                    </motion.figcaption>
+                      
+                    </div>
                   )}
 
                   {/* Floating indicator badge */}
@@ -360,7 +325,7 @@ const GalleryPage: React.FC = () => {
               exit={{ scale: 0.9, opacity: 0 }}
               onClick={(e) => e.stopPropagation()}
               className="bg-gradient-to-br from-black/95 to-black/85 border-2 border-blue-500/30 rounded-3xl overflow-hidden max-w-5xl w-full max-h-[90vh] flex flex-col relative"
-              style={{ width: "600px", height: "600px" }}
+              style={{ width: "800px", height: "600px" }}
             >
               {/* Header */}
               <div className="p-6 border-b border-blue-500/20 flex items-center justify-between">
@@ -378,65 +343,81 @@ const GalleryPage: React.FC = () => {
                 </motion.button>
               </div>
 
-              {/* Main Image Display */}
-              <div className="flex-1 overflow-hidden flex items-center justify-center bg-black/50 relative">
-                <AnimatePresence mode="wait">
-                  <motion.div
-                    key={currentImageIndex}
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    transition={{ duration: 0.3 }}
-                    className="relative w-full h-full flex items-center justify-center"
-                  >
-                    <Image
-                      src={selectedAlbumItem.images?.[currentImageIndex] || selectedAlbumItem.image}
-                      alt={`${selectedAlbumItem.title} - Image ${currentImageIndex + 1}`}
-                      className="max-w-full max-h-full object-contain"
-                      width={800}
-                      height={600}
-                    />
-
-                    {/* Image Counter */}
-                    <div className="absolute top-4 right-4 px-3 py-1.5 rounded-full bg-black/70 backdrop-blur-sm border border-blue-500/30">
-                      <span className="text-blue-300 font-semibold text-sm">
-                        {currentImageIndex + 1} / {selectedAlbumItem.images?.length || 1}
-                      </span>
-                    </div>
-
-                    {/* Navigation Arrows */}
-                    {selectedAlbumItem.images && selectedAlbumItem.images.length > 1 && (
-                      <>
-                        <motion.button
-                          whileHover={{ scale: 1.1 }}
-                          whileTap={{ scale: 0.95 }}
-                          onClick={() =>
-                            setCurrentImageIndex(
-                              (prev) =>
-                                (prev - 1 + selectedAlbumItem.images.length) %
-                                selectedAlbumItem.images.length
-                            )
-                          }
-                          className="absolute left-4 p-3 rounded-full bg-gray-800/80 text-white transition-all shadow-lg"
-                        >
-                          <ChevronLeft className="w-6 h-6" />
-                        </motion.button>
-                        <motion.button
-                          whileHover={{ scale: 1.1 }}
-                          whileTap={{ scale: 0.95 }}
-                          onClick={() =>
-                            setCurrentImageIndex(
-                              (prev) => (prev + 1) % selectedAlbumItem.images.length
-                            )
-                          }
-                          className="absolute right-4 p-3 rounded-full bg-gray-800/80 text-white transition-all shadow-lg"
-                        >
-                          <ChevronRight className="w-6 h-6" />
-                        </motion.button>
-                      </>
-                    )}
-                  </motion.div>
-                </AnimatePresence>
+              {/* Main Image and Description Side by Side */}
+              <div className="flex-1 flex flex-col sm:flex-row bg-black/50 overflow-hidden">
+                
+                {/* Image Panel */}
+                <div className="w-full sm:w-3/5 flex items-center justify-center relative">
+                  <AnimatePresence mode="wait">
+                    <motion.div
+                      key={currentImageIndex}
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                      transition={{ duration: 0.3 }}
+                      className="relative w-full h-full flex items-center justify-center"
+                    >
+                      <div 
+                        className="relative w-[90vw] h-[220px] sm:w-[400px] sm:h-[400px] flex items-center justify-center group/imagepanel"
+                      >
+                        <Image
+                          src={selectedAlbumItem.images?.[currentImageIndex] || selectedAlbumItem.image}
+                          alt={`${selectedAlbumItem.title} - Image ${currentImageIndex + 1}`}
+                          className="object-contain rounded-xl shadow-lg w-full h-full"
+                          width={400}
+                          height={400}
+                          sizes="(max-width: 640px) 90vw, 400px"
+                        />
+                        {/* Image Counter */}
+                        <div className="absolute top-2 sm:top-4 right-2 sm:right-4 px-2 sm:px-3 py-1 rounded-full bg-black/70 backdrop-blur-sm border border-blue-500/30">
+                          <span className="text-blue-300 font-semibold text-xs sm:text-sm">
+                            {currentImageIndex + 1} / {selectedAlbumItem.images?.length || 1}
+                          </span>
+                        </div>
+                        {/* Navigation Arrows */}
+                        {selectedAlbumItem.images && selectedAlbumItem.images.length > 1 && (
+                          <>
+                            <motion.button
+                              whileHover={{ scale: 1.1 }}
+                              whileTap={{ scale: 0.95 }}
+                              onClick={() =>
+                                setCurrentImageIndex(
+                                  (prev) =>
+                                    (prev - 1 + selectedAlbumItem.images.length) %
+                                    selectedAlbumItem.images.length
+                                )
+                              }
+                              className="absolute left-2 sm:left-4 p-2 sm:p-3 rounded-full bg-gray-800/80 text-white transition-all shadow-lg opacity-0 group-hover/imagepanel:opacity-100 transition-opacity"
+                            >
+                              <ChevronLeft className="w-5 h-5 sm:w-6 sm:h-6" />
+                            </motion.button>
+                            <motion.button
+                              whileHover={{ scale: 1.1 }}
+                              whileTap={{ scale: 0.95 }}
+                              onClick={() =>
+                                setCurrentImageIndex(
+                                  (prev) => (prev + 1) % selectedAlbumItem.images.length
+                                )
+                              }
+                              className="absolute right-2 sm:right-4 p-2 sm:p-3 rounded-full bg-gray-800/80 text-white transition-all shadow-lg opacity-0 group-hover/imagepanel:opacity-100 transition-opacity"
+                            >
+                              <ChevronRight className="w-5 h-5 sm:w-6 sm:h-6" />
+                            </motion.button>
+                          </>
+                        )}
+                      </div>
+                    </motion.div>
+                  </AnimatePresence>
+                </div>
+                {/* Description Panel */}
+                <div className="w-full sm:w-2/5 flex flex-col  items-start p-4 sm:p-8 bg-blue/90 backdrop-blur-md border-r border-blue-500/20">
+                  {selectedAlbumItem.title && (
+                    <h3 className="text-xl sm:text-2xl font-bold text-white mb-2">{selectedAlbumItem.title}</h3>
+                  )}
+                  {selectedAlbumItem.description && (
+                    <p className="text-gray-200 text-sm sm:text-base whitespace-pre-line mb-4">{selectedAlbumItem.description}</p>
+                  )}
+                </div>
               </div>
 
               {/* Thumbnail Strip */}

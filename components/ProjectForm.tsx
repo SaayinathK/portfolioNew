@@ -8,14 +8,13 @@ export interface ProjectFormValues {
   _id?: string;
   title: string;
   description: string;
-  longDescription?: string;
   imageUrl: string;
-  tags: string;
-  technologies?: string;
   githubLink?: string;
   liveLink?: string;
-  type?: "individual" | "team";
+  contribution?: "individual" | "team";
   year?: string;
+  projectType: "Prototype" | "Web Application" | "Mobile Application" | "Web site";
+  technologiesFramework?: string;
 }
 
 interface ProjectFormProps {
@@ -32,14 +31,13 @@ export default function ProjectForm({
   const [values, setValues] = useState<ProjectFormValues>({
     title: "",
     description: "",
-    longDescription: "",
     imageUrl: "",
-    tags: "",
-    technologies: "",
     githubLink: "",
     liveLink: "",
-    type: "individual",
+    contribution: "individual",
     year: new Date().getFullYear().toString(),
+    projectType: "Prototype",
+    technologiesFramework: "",
   });
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
@@ -49,14 +47,10 @@ export default function ProjectForm({
     if (initialValues) {
       setValues({
         ...initialValues,
-        tags:
-          typeof initialValues.tags === "string"
-            ? initialValues.tags
-            : ((initialValues.tags as string[]) || []).join(", "),
-        technologies:
-          typeof initialValues.technologies === "string"
-            ? initialValues.technologies
-            : ((initialValues.technologies as string[]) || []).join(", "),
+        technologiesFramework:
+          typeof initialValues.technologiesFramework === "string"
+            ? initialValues.technologiesFramework
+            : ((initialValues.technologiesFramework as string[]) || []).join(", ")
       });
       setImagePreview(initialValues.imageUrl || "");
     }
@@ -93,17 +87,23 @@ export default function ProjectForm({
       const formData = new FormData();
       formData.append("file", file);
 
-      const response = await fetch("/api/projects?action=upload", {
+      // Use a dedicated upload endpoint for Vercel (e.g., /api/upload)
+      const response = await fetch("/api/upload", {
         method: "POST",
         body: formData,
       });
 
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || "Upload failed");
+        let errorMsg = "Upload failed";
+        try {
+          const errorData = await response.json();
+          errorMsg = errorData.error || errorMsg;
+        } catch {}
+        throw new Error(errorMsg);
       }
 
       const data = await response.json();
+      if (!data.url) throw new Error("No image URL returned from upload");
       setValues((prev) => ({ ...prev, imageUrl: data.url }));
       setImagePreview(data.url);
     } catch (error) {
@@ -123,19 +123,19 @@ export default function ProjectForm({
     e.preventDefault();
     try {
       setLoading(true);
+      // Pass values as-is; convert technologiesFramework to array in backend if needed
       await onSubmit(values);
       if (!initialValues) {
         setValues({
           title: "",
           description: "",
-          longDescription: "",
           imageUrl: "",
-          tags: "",
-          technologies: "",
           githubLink: "",
           liveLink: "",
-          type: "individual",
+          contribution: "individual",
           year: new Date().getFullYear().toString(),
+          projectType: "Prototype",
+          technologiesFramework: "",
         });
         setImagePreview("");
       }
@@ -160,29 +160,19 @@ export default function ProjectForm({
         />
       </div>
 
+
       <div>
         <label className="block text-sm text-black font-medium mb-1">
-          Short Description <span className="text-red-500">*</span>
+          Description <span className="text-red-500">*</span>
         </label>
-        <input
+        <textarea
           name="description"
           value={values.description}
           onChange={handleChange}
           className="w-full rounded border text-gray-600 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary"
-          placeholder="e.g., Agriculture Mobile App"
-          required
-        />
-      </div>
-
-      <div>
-        <label className="block text-sm text-black font-medium mb-1">Long Description</label>
-        <textarea
-          name="longDescription"
-          value={values.longDescription || ""}
-          onChange={handleChange}
-          className="w-full rounded border  text-gray-600 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary"
           rows={3}
-          placeholder="Detailed description of the project..."
+          placeholder="Describe your project..."
+          required
         />
       </div>
 
@@ -257,12 +247,13 @@ export default function ProjectForm({
         </div>
       </div>
 
+
       <div className="grid grid-cols-2 gap-4">
         <div>
-          <label className="block text-sm font-medium mb-1 text-black">Type</label>
+          <label className="block text-sm font-medium mb-1 text-black">Contribution</label>
           <select
-            name="type"
-            value={values.type || "individual"}
+            name="contribution"
+            value={values.contribution || "individual"}
             onChange={handleChange}
             className="w-full rounded border px-3 py-2 text-black focus:outline-none focus:ring-2 focus:ring-primary"
           >
@@ -270,7 +261,6 @@ export default function ProjectForm({
             <option value="team">Team</option>
           </select>
         </div>
-
         <div>
           <label className="block text-sm font-medium mb-1 text-black">Year</label>
           <input
@@ -284,28 +274,32 @@ export default function ProjectForm({
       </div>
 
       <div>
-        <label className="block text-sm font-medium mb-1 text-black">
-          Technologies (comma separated)
-        </label>
-        <input
-          name="technologies"
-          value={values.technologies || ""}
+        <label className="block text-sm font-medium mb-1 text-black">Project Type</label>
+        <select
+          name="projectType"
+          value={values.projectType}
           onChange={handleChange}
           className="w-full rounded border px-3 py-2 text-black focus:outline-none focus:ring-2 focus:ring-primary"
-          placeholder="e.g., Kotlin, Firebase, Android Studio"
-        />
+          required
+        >
+          <option value="Prototype">Prototype</option>
+          <option value="Web Application">Web Application</option>
+          <option value="Mobile Application">Mobile Application</option>
+          <option value="Website">Website</option>
+        </select>
       </div>
+
 
       <div>
         <label className="block text-sm font-medium mb-1 text-black">
-          Tags (comma separated)
+          Technologies/Framework (comma separated)
         </label>
         <input
-          name="tags"
-          value={values.tags}
+          name="technologiesFramework"
+          value={values.technologiesFramework || ""}
           onChange={handleChange}
           className="w-full rounded border px-3 py-2 text-black focus:outline-none focus:ring-2 focus:ring-primary"
-          placeholder="e.g., mobile, agriculture, education"
+          placeholder="e.g., Kotlin, Firebase, Android Studio"
         />
       </div>
 

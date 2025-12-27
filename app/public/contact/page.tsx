@@ -37,7 +37,7 @@ const ContactPage: React.FC = () => {
     fetch("/api/contact")
       .then((res) => res.json())
       .then((data) => {
-        setcontact(Array.isArray(data) ? data : []);
+        setcontact(data || []);
         setLoading(false);
       })
       .catch(() => setLoading(false));
@@ -128,7 +128,7 @@ const ContactPage: React.FC = () => {
           />
         </div>
 
-        {(!Array.isArray(contact) || contact.length === 0) ? (
+        {contact.length === 0 ? (
           <div className="rounded-2xl border border-white/10 bg-white/5 p-8 text-center text-gray-400">
             <div className="animate-pulse">Loading contact information...</div>
           </div>
@@ -159,18 +159,18 @@ const ContactPage: React.FC = () => {
                       setCopiedField('email');
                       setTimeout(() => setCopiedField(null), 1200);
                     }}
-                    className="group relative flex items-start gap-4 p-5 rounded-2xl bg-gradient-to-r from-cyan-500/10 to-transparent border border-gray-500/20 hover:border-cyan-500/40 transition-all backdrop-blur-sm overflow-hidden cursor-pointer"
+                    className="group relative flex items-start gap-2 sm:gap-4 p-3 sm:p-5 rounded-xl sm:rounded-2xl bg-gradient-to-r from-cyan-500/10 to-transparent border border-gray-500/20 hover:border-cyan-500/40 transition-all backdrop-blur-sm overflow-hidden cursor-pointer"
                   >
                     <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-                    <div className="relative p-3 rounded-xl bg-gradient-to-br from-cyan-500/30 to-teal-500/30 shadow-lg group-hover:shadow-cyan-500/20 transition-shadow">
-                      <Mail size={22} className="text-cyan-300" />
+                    <div className="relative p-2 sm:p-3 rounded-lg sm:rounded-xl bg-gradient-to-br from-cyan-500/30 to-teal-500/30 shadow-lg group-hover:shadow-cyan-500/20 transition-shadow">
+                      <Mail size={18} className="text-cyan-300" />
                     </div>
                     <div className="relative flex-1">
-                      <p className="text-xs text-cyan-400/80 font-semibold mb-1 uppercase tracking-wider">Email</p>
-                      <p className="font-bold text-white text-lg group-hover:text-cyan-300 transition-colors flex items-center gap-2">
+                      <p className="text-[10px] sm:text-xs text-cyan-400/80 font-semibold mb-0.5 sm:mb-1 uppercase tracking-wider">Email</p>
+                      <p className="font-bold text-white text-sm sm:text-lg group-hover:text-cyan-300 transition-colors flex items-center gap-1 sm:gap-2">
                         {c.email}
                         {copiedField === 'email' && (
-                          <span className="text-xs text-cyan-300 ml-2 animate-pulse">Copied!</span>
+                          <span className="text-[10px] sm:text-xs text-cyan-300 ml-1 sm:ml-2 animate-pulse">Copied!</span>
                         )}
                       </p>
                     </div>
@@ -188,18 +188,18 @@ const ContactPage: React.FC = () => {
                         setCopiedField('studentEmail');
                         setTimeout(() => setCopiedField(null), 1200);
                       }}
-                      className="group relative flex items-start gap-4 p-5 rounded-2xl bg-gradient-to-r from-teal-500/10 to-transparent border border-teal-500/20 hover:border-teal-500/40 transition-all backdrop-blur-sm overflow-hidden cursor-pointer"
+                      className="group relative flex items-start gap-2 sm:gap-4 p-3 sm:p-5 rounded-xl sm:rounded-2xl bg-gradient-to-r from-teal-500/10 to-transparent border border-teal-500/20 hover:border-teal-500/40 transition-all backdrop-blur-sm overflow-hidden cursor-pointer"
                     >
                       <div className="absolute inset-0 bg-gradient-to-r from-teal-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-                      <div className="relative p-3 rounded-xl bg-gradient-to-br from-teal-500/30 to-cyan-500/30 shadow-lg group-hover:shadow-teal-500/20 transition-shadow">
-                        <Mail size={22} className="text-teal-300" />
+                      <div className="relative p-2 sm:p-3 rounded-lg sm:rounded-xl bg-gradient-to-br from-teal-500/30 to-cyan-500/30 shadow-lg group-hover:shadow-teal-500/20 transition-shadow">
+                        <Mail size={18} className="text-teal-300" />
                       </div>
                       <div className="relative flex-1">
-                        <p className="text-xs text-teal-400/80 font-semibold mb-1 uppercase tracking-wider">Student Email</p>
-                        <p className="font-bold text-white text-lg group-hover:text-teal-300 transition-colors flex items-center gap-2">
+                        <p className="text-[10px] sm:text-xs text-teal-400/80 font-semibold mb-0.5 sm:mb-1 uppercase tracking-wider">Student Email</p>
+                        <p className="font-bold text-white text-sm sm:text-lg group-hover:text-teal-300 transition-colors flex items-center gap-1 sm:gap-2">
                           {c.studentEmail}
                           {copiedField === 'studentEmail' && (
-                            <span className="text-xs text-teal-300 ml-2 animate-pulse">Copied!</span>
+                            <span className="text-[10px] sm:text-xs text-teal-300 ml-1 sm:ml-2 animate-pulse">Copied!</span>
                           )}
                         </p>
                       </div>
@@ -217,18 +217,18 @@ const ContactPage: React.FC = () => {
                       setCopiedField('phone');
                       setTimeout(() => setCopiedField(null), 1200);
                     }}
-                    className="group relative flex items-start gap-4 p-5 rounded-2xl bg-gradient-to-r from-blue-500/10 to-transparent border border-blue-500/20 hover:border-blue-500/40 transition-all backdrop-blur-sm overflow-hidden cursor-pointer"
+                    className="group relative flex items-start gap-2 sm:gap-4 p-3 sm:p-5 rounded-xl sm:rounded-2xl bg-gradient-to-r from-blue-500/10 to-transparent border border-blue-500/20 hover:border-blue-500/40 transition-all backdrop-blur-sm overflow-hidden cursor-pointer"
                   >
                     <div className="absolute inset-0 bg-gradient-to-r from-blue-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-                    <div className="relative p-3 rounded-xl bg-gradient-to-br from-blue-500/30 to-cyan-500/30 shadow-lg group-hover:shadow-blue-500/20 transition-shadow">
-                      <Phone size={22} className="text-blue-300" />
+                    <div className="relative p-2 sm:p-3 rounded-lg sm:rounded-xl bg-gradient-to-br from-blue-500/30 to-cyan-500/30 shadow-lg group-hover:shadow-blue-500/20 transition-shadow">
+                      <Phone size={18} className="text-blue-300" />
                     </div>
                     <div className="relative flex-1">
-                      <p className="text-xs text-blue-400/80 font-semibold mb-1 uppercase tracking-wider">Phone</p>
-                      <p className="font-bold text-white text-lg group-hover:text-blue-300 transition-colors flex items-center gap-2">
+                      <p className="text-[10px] sm:text-xs text-blue-400/80 font-semibold mb-0.5 sm:mb-1 uppercase tracking-wider">Phone</p>
+                      <p className="font-bold text-white text-sm sm:text-lg group-hover:text-blue-300 transition-colors flex items-center gap-1 sm:gap-2">
                         {c.phone}
                         {copiedField === 'phone' && (
-                          <span className="text-xs text-blue-300 ml-2 animate-pulse">Copied!</span>
+                          <span className="text-[10px] sm:text-xs text-blue-300 ml-1 sm:ml-2 animate-pulse">Copied!</span>
                         )}
                       </p>
                     </div>
@@ -243,15 +243,15 @@ const ContactPage: React.FC = () => {
                       navigator.clipboard.writeText(c.location);
                       alert('Location copied to clipboard!');
                     }}
-                    className="group relative flex items-start gap-4 p-5 rounded-2xl bg-gradient-to-r from-purple-500/10 to-transparent border border-gray-500/20 hover:border-gray-500/40 transition-all backdrop-blur-sm overflow-hidden cursor-pointer"
+                    className="group relative flex items-start gap-2 sm:gap-4 p-3 sm:p-5 rounded-xl sm:rounded-2xl bg-gradient-to-r from-purple-500/10 to-transparent border border-gray-500/20 hover:border-gray-500/40 transition-all backdrop-blur-sm overflow-hidden cursor-pointer"
                   >
                     <div className="absolute inset-0 bg-gradient-to-r from-purple-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-                    <div className="relative p-3 rounded-xl bg-gradient-to-br from-purple-500/30 to-blue-500/30 shadow-lg group-hover:shadow-purple-500/20 transition-shadow">
-                      <MapPin size={22} className="text-purple-300" />
+                    <div className="relative p-2 sm:p-3 rounded-lg sm:rounded-xl bg-gradient-to-br from-purple-500/30 to-blue-500/30 shadow-lg group-hover:shadow-purple-500/20 transition-shadow">
+                      <MapPin size={18} className="text-purple-300" />
                     </div>
                     <div className="relative flex-1">
-                      <p className="text-xs text-purple-400/80 font-semibold mb-1 uppercase tracking-wider">Location</p>
-                      <p className="font-bold text-white text-lg group-hover:text-purple-300 transition-colors">{c.location}</p>
+                      <p className="text-[10px] sm:text-xs text-purple-400/80 font-semibold mb-0.5 sm:mb-1 uppercase tracking-wider">Location</p>
+                      <p className="font-bold text-white text-sm sm:text-lg group-hover:text-purple-300 transition-colors">{c.location}</p>
                     </div>
                   </motion.div>
                 </div>
@@ -326,6 +326,9 @@ const ContactPage: React.FC = () => {
 
               {/* Right - Message Form */}
               <form onSubmit={handleSubmit} className="space-y-5">
+                <h3 className="text-3xl font-bold bg-gradient-to-r from-white via-cyan-100 to-teal-100 bg-clip-text text-transparent mb-6">
+                          Send a Message
+                        </h3>
 
               {/* 1. Email Address */}
               <motion.div
@@ -342,7 +345,7 @@ const ContactPage: React.FC = () => {
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="you@example.com"
                   required
-                  className="w-full rounded-xl border-2 border-slate-700/50 bg-slate-900/80 px-5 py-3.5 text-white placeholder:text-slate-500 focus:outline-none focus:border-cyan-500/50 focus:ring-2 focus:ring-cyan-500/20 transition-all backdrop-blur-sm"
+                  className="w-full rounded-xl border-2 border-slate-700/50 bg-black/20 px-5 py-3.5 text-white placeholder:text-slate-500 focus:outline-none focus:border-cyan-500/50 focus:ring-2 focus:ring-cyan-500/20 transition-all backdrop-blur-sm"
                 />
               </motion.div>
 
@@ -360,7 +363,7 @@ const ContactPage: React.FC = () => {
                   onChange={(e) => setSubject(e.target.value)}
                   placeholder="Project inquiry"
                   required
-                  className="w-full rounded-xl border-2 border-slate-700/50 bg-slate-900/80 px-5 py-3.5 text-white placeholder:text-slate-500 focus:outline-none focus:border-cyan-500/50 focus:ring-2 focus:ring-cyan-500/20 transition-all backdrop-blur-sm"
+                  className="w-full rounded-xl border-2 border-slate-700/50 bg-black/20 px-5 py-3.5 text-white placeholder:text-slate-500 focus:outline-none focus:border-cyan-500/50 focus:ring-2 focus:ring-cyan-500/20 transition-all backdrop-blur-sm"
                 />
               </motion.div>
 
@@ -379,7 +382,7 @@ const ContactPage: React.FC = () => {
                   placeholder="Write your message here..."
                   rows={5}
                   required
-                  className="w-full rounded-xl border-2 border-slate-700/50 bg-slate-900/80 px-5 py-3.5 text-white placeholder:text-slate-500 focus:outline-none focus:border-cyan-500/50 focus:ring-2 focus:ring-cyan-500/20 transition-all resize-none backdrop-blur-sm"
+                  className="w-full rounded-xl border-2 border-slate-700/50 bg-black/20 px-5 py-3.5 text-white placeholder:text-slate-500 focus:outline-none focus:border-cyan-500/50 focus:ring-2 focus:ring-cyan-500/20 transition-all resize-none backdrop-blur-sm"
                 />
               </motion.div>
 
@@ -395,19 +398,22 @@ const ContactPage: React.FC = () => {
                 </p>
               )}
 
-              {/* Submit Button */}
               <motion.button
                 type="submit"
                 disabled={submitting}
                 whileHover={{ scale: 1.02, y: -2 }}
                 whileTap={{ scale: 0.98 }}
-                className="w-full flex items-center justify-center gap-3 rounded-xl bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white font-bold py-4 shadow-lg transition-all disabled:opacity-60"
+                className="w-full flex items-center justify-center gap-3 rounded-xl bg-gradient-to-r from-blue-500/30 to-black-500 hover:from-gray-500 hover:to-black-500 text-white font-bold py-4 shadow-lg shadow-black-500/30 hover:shadow-cyan-500/50 transition-all disabled:opacity-60 disabled:cursor-not-allowed group relative overflow-hidden"
               >
-                {submitting ? "Opening Mail..." : "Send Message"}
+                <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700" />
+
+                <Send size={18} className="relative z-10" />
+                <span className="relative z-10">
+                  {submitting ? "Opening Mail..." : "Send Message"}
+                </span>
               </motion.button>
-
+              
             </form>
-
             </div>
           );
         })()}
