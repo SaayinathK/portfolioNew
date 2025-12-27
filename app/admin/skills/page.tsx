@@ -151,7 +151,15 @@ export default function AdminSkillsPage() {
           </div>
 
           <button
-            onClick={() => setEditing(null)}
+            onClick={() => setEditing({
+              _id: '',
+              name: '',
+              type: 'Technical Skills',
+              subtype: '',
+              level: '',
+              description: '',
+              yearsOfExperience: undefined,
+            })}
             className="inline-flex items-center gap-2 rounded-2xl bg-gradient-to-r from-indigo-600 to-pink-600 px-6 py-3 font-semibold text-white shadow-lg hover:shadow-indigo-500/30 transition"
           >
             <Plus size={18} /> Add New Skill
@@ -320,7 +328,7 @@ export default function AdminSkillsPage() {
 
                   <div className="mt-4 flex justify-between items-center">
                     <button
-                      onClick={() => setEditing(skill)}
+                      onClick={() => setEditing({ ...skill })}
                       className="inline-flex items-center gap-1.5 rounded-lg bg-indigo-50 px-3 py-1.5 text-xs font-medium text-indigo-700 hover:bg-indigo-100"
                     >
                       <Pencil size={12} /> Edit

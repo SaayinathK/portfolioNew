@@ -62,7 +62,12 @@ export default function ProjectForm({
     const { name, value } = e.target;
     setValues((prev) => ({ ...prev, [name]: value }));
     if (name === "imageUrl") {
-      setImagePreview(value);
+      // Only set preview if value is a server URL (not blob:)
+      if (value && !value.startsWith("blob:")) {
+        setImagePreview(value);
+      } else {
+        setImagePreview("");
+      }
     }
   };
 

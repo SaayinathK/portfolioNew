@@ -99,7 +99,19 @@ export default function AdminEducationPage() {
       <div className="flex flex-col md:flex-row items-center justify-between gap-4">
         <h1 className="text-3xl font-bold text-gray-800">Education</h1>
         <button
-          onClick={() => setEditing(null)}
+          onClick={() => setEditing({
+            _id: '',
+            institution: '',
+            degree: '',
+            field: '',
+            startDate: '',
+            endDate: '',
+            isCurrentlyEnrolled: false,
+            gpa: '',
+            description: '',
+            logo: '',
+            activities: [],
+          })}
           className="rounded-lg bg-blue-600 px-5 py-2 text-sm font-semibold text-white hover:bg-blue-700 transition-colors shadow-md"
         >
           Add New Education

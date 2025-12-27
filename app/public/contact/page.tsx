@@ -64,10 +64,9 @@ const ContactPage: React.FC = () => {
     setSubmitting(true);
 
     const mailtoLink = `mailto:k.saayinath@gmail.com
+      ?from=${encodeURIComponent(email)}
       ?subject=${encodeURIComponent(subject)}
-      &body=${encodeURIComponent(
-        `From: ${email}\n\nMessage:\n${message}`
-      )}`;
+      &body=${encodeURIComponent(message)}`;
 
     window.location.href = mailtoLink;
 
