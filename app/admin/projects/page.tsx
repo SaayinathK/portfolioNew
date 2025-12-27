@@ -318,12 +318,21 @@ export default function AdminProjectsPage() {
                           </div>
                           <p className="text-gray-700 line-clamp-2 mb-1">{project.description}</p>
                           {project.technologiesFramework && (
-                            <div className="flex flex-wrap gap-1 mb-1">
-                              {(typeof project.technologiesFramework === 'string' ? project.technologiesFramework.split(',').map(t => t.trim()) : Array.isArray(project.technologiesFramework) ? project.technologiesFramework : []).filter(Boolean).map((tech, idx) => (
-                                <span key={tech + idx} className="px-2 py-0.5 rounded bg-gradient-to-r from-blue-500/10 to-cyan-500/10 text-blue-700 border border-blue-500/20 text-xs font-medium">{tech}</span>
+                          <div>
+                            <p className="text-xs text-gray-400 mb-2">TECHNOLOGIES & FRAMEWORKS</p>
+                            <ul className="text-gray-600 space-y-1 list-disc list-inside">
+                              {(Array.isArray(project.technologiesFramework)
+                                ? project.technologiesFramework.filter(Boolean)
+                                : typeof project.technologiesFramework === "string"
+                                  ? project.technologiesFramework.split(',').map(t => t.trim()).filter(Boolean)
+                                  : []
+                              ).map((tech: string, i: number) => (
+                                <li key={i}>{tech}</li>
                               ))}
-                            </div>
-                          )}
+                            </ul>
+                          </div>
+                        )}
+
                         </div>
                       </div>
 

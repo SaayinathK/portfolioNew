@@ -35,7 +35,6 @@ const adminItems = [
   { label: "Education", href: "/admin/education" },
   { label: "Experience", href: "/admin/experience" },
   { label: "Achievements", href: "/admin/achievements" },
-  { label: "Gallery", href: "/admin/gallery" },
   { label: "Contact", href: "/admin/contact" },  
 ];
 
@@ -46,7 +45,6 @@ const navLinks = [
   { id: "education", label: "Education", icon: GraduationCap },
   { id: "experience", label: "Experience", icon: BriefcaseIcon },
   { id: "achievements", label: "Achievements", icon: Trophy },
-  { id: "gallery", label: "Gallery", icon: ImageIcon },
   { id: "contact", label: "Contact", icon: Mail },  
 ];
 
@@ -57,7 +55,7 @@ export default function Navbar() {
   // Track active section on scroll
   useEffect(() => {
     const handleScroll = () => {
-      const sections = ["about", "skills", "projects", "education", "experience", "achievements", "gallery", "contact"];
+      const sections = ["about", "skills", "projects", "education", "experience", "achievements", "contact"];
 
       for (const id of sections) {
         const el = document.getElementById(id);

@@ -11,7 +11,6 @@ const links = [
   { href: "/admin/education", label: "Education" },
   { href: "/admin/experience", label: "Experience" },
   { href: "/admin/achievements", label: "Achievements" },
-  { href: "/admin/gallery", label: "Gallery" },
   { href: "/admin/contact", label: "Contact" },
 ];
 

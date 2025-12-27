@@ -21,10 +21,16 @@ export async function POST(req: Request) {
     const body = await req.json();
 
     // Accepts imageUrl as base64 string (like achievements)
+    // Accept technologiesFramework as a comma-separated string (for compatibility with ProjectForm)
     const payload = {
       ...body,
-      tags: Array.isArray(body.tags) ? body.tags : (body.tags?.split(',').map((t: string) => t.trim()).filter(Boolean) || []),
-      technologies: Array.isArray(body.technologies) ? body.technologies : (body.technologies?.split(',').map((t: string) => t.trim()).filter(Boolean) || []),
+      // If tags is an array, join to string; if string, trim
+      tags: Array.isArray(body.tags)
+        ? body.tags.filter(Boolean).join(', ')
+        : (typeof body.tags === 'string' ? body.tags : ''),
+      technologiesFramework: Array.isArray(body.technologiesFramework)
+        ? body.technologiesFramework.filter(Boolean).join(', ')
+        : (typeof body.technologiesFramework === 'string' ? body.technologiesFramework : ''),
     };
 
     const project = await Project.create(payload);
@@ -46,8 +52,12 @@ export async function PUT(req: Request) {
 
     const payload = {
       ...update,
-      tags: Array.isArray(update.tags) ? update.tags : (update.tags?.split(',').map((t: string) => t.trim()).filter(Boolean) || []),
-      technologies: Array.isArray(update.technologies) ? update.technologies : (update.technologies?.split(',').map((t: string) => t.trim()).filter(Boolean) || []),
+      tags: Array.isArray(update.tags)
+        ? update.tags.filter(Boolean).join(', ')
+        : (typeof update.tags === 'string' ? update.tags : ''),
+      technologiesFramework: Array.isArray(update.technologiesFramework)
+        ? update.technologiesFramework.filter(Boolean).join(', ')
+        : (typeof update.technologiesFramework === 'string' ? update.technologiesFramework : ''),
     };
 
     const project = await Project.findOneAndUpdate({ _id }, payload, { new: true }).lean();

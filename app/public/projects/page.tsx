@@ -246,27 +246,27 @@ const ProjectsPage: React.FC = () => {
                     </div>
 
                     {/* Technologies/Framework */}
-                    {/* Show each technology/framework as a separate badge */}
-                    {(() => {
-                      let techs: string[] = [];
-                      if (Array.isArray(p.technologiesFramework)) {
-                        techs = p.technologiesFramework;
-                      } else if (typeof p.technologiesFramework === "string" && p.technologiesFramework.length > 0) {
-                        techs = p.technologiesFramework.split(/,|\n/).map(t => t.trim()).filter(Boolean);
-                      }
-                      return techs.length > 0 ? (
-                        <div className="flex flex-wrap gap-2 mt-2">
-                          {techs.map((t: string, idx: number) => (
+                    {p.technologiesFramework && (
+                      <div>
+                        <p className="text-xs text-gray-400 mb-2">TECHNOLOGIES & FRAMEWORKS</p>
+                        <div className="flex flex-wrap gap-2">
+                          {(Array.isArray(p.technologiesFramework)
+                            ? p.technologiesFramework.filter(Boolean)
+                            : typeof p.technologiesFramework === "string"
+                              ? p.technologiesFramework.split(",").map(t => t.trim()).filter(Boolean)
+                              : []
+                          ).map((tech: string, idx: number) => (
                             <span
-                              key={t + idx}
+                              key={tech + idx}
                               className="px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-md text-[11px] sm:text-xs font-medium bg-gradient-to-r from-blue-500/10 to-cyan-500/10 text-blue-300 border border-blue-500/20"
                             >
-                              {t}
+                              {tech}
                             </span>
                           ))}
                         </div>
-                      ) : null;
-                    })()}
+                      </div>
+                    )}
+
                   </div>
                 </motion.article>
               );
